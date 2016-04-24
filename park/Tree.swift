@@ -154,23 +154,21 @@ indirect enum Node<T where T:Comparable, T:Hashable> : CustomStringConvertible {
         case Leaf: return Leaf
         case let Tree(leftBranch, _, rightBranch, _):
             switch leftBranch.height() - rightBranch.height() {
-            case -1...1:
-                return self
+            case -1...1: return self
             default:
                 let leftIsHigher = leftBranch.height() > rightBranch.height()
-                let branch = leftIsHigher ? leftBranch : rightBranch
-                switch branch {
-                case Leaf: return self
-                case let Tree:
-                    
-                    func graft(middleBranch: Node<T>) -> Node<T> {
-                        return self.substitute({_ in middleBranch},
-                                               forLeftBranchIf: leftIsHigher)!
-                    }
-                    
+                
+                func graft(middleBranch: Node<T>) -> Node<T> {
+                    return self.substitute({_ in middleBranch},
+                                           forLeftBranchIf: leftIsHigher)!
+                }
+                
+                func prune(branch : Node<T>) -> Node<T> {
                     return branch.substitute({graft($0)},
                                              forLeftBranchIf: !leftIsHigher)!
                 }
+                
+                return self.apply(prune, onLeftBranchIf: leftIsHigher)!
             }
         }
     }
