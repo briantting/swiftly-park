@@ -28,6 +28,8 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
     var prevLocation: CLLocation? = nil
     // Tracks previous time
     var prevTime: Double = 0
+    // Tracks previous speed
+    var prevSpeed: Double = 2
     
     var spot: CLLocationCoordinate2D = CLLocationCoordinate2D(latitude: 39.9526, longitude: -75.1652)
     
@@ -41,8 +43,8 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
             let coordinateRegion = MKCoordinateRegionMakeWithDistance(location, regionDiameter, regionDiameter)
             mapView.setRegion(coordinateRegion, animated: true)
         }
-       
-        let philadelphia = CLLocationCoordinate2D(latitude: 39.9526, longitude: -75.1652)
+
+        let philadelphia = CLLocationCoordinate2D(latitude: 37.33182, longitude: -122.03118)
         centerMapOnLocation(philadelphia)
         let spot = philadelphia
         mapView.addAnnotation(ParkingSpot(spot))
@@ -64,9 +66,15 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
         let longitude: Double = latestLocation.coordinate.longitude
         let time: Double = latestLocation.timestamp.timeIntervalSinceReferenceDate
         // Calculates speed
-        var speed: Double = 0
+        var speed: Double = prevSpeed
         if prevLocation != nil {
             speed = latestLocation.distanceFromLocation(prevLocation!) / (time - prevTime)
+            // Deals with speed spikes
+            if speed > 100 {
+                speed = prevSpeed
+            } else {
+                prevSpeed = speed
+            }
         }
         prevLocation = latestLocation
         prevTime = time
