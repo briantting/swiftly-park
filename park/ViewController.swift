@@ -17,20 +17,20 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
 
     // Tracks if user is currently driving
     var isDriving: Bool = true
-    // Tracks if user has stopped
-    var stopSet: Bool = false
-    // Tracks latitude of stop
-    var stopLatitude: Double = 0
-    // Tracks longitude of stop
-    var stopLongitude: Double = 0
-    // Tracks time of stop
-    var stopTime: Double = 0
+//    // Tracks if user has stopped
+//    var stopSet: Bool = false
+//    // Tracks latitude of stop
+//    var stopLatitude: Double = 0
+//    // Tracks longitude of stop
+//    var stopLongitude: Double = 0
+//    // Tracks time of stop
+//    var stopTime: Double = 0
     // Tracks previous location
     var prevLocation: CLLocation? = nil
     // Tracks previous time
     var prevTime: Double = 0
     // Tracks previous speed
-    var prevSpeed: Double = 2
+    var prevSpeed: Double = 5
     
     var spot: CLLocationCoordinate2D = CLLocationCoordinate2D(latitude: 39.9526, longitude: -75.1652)
     
@@ -71,7 +71,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
         // Calculates speed
         var speed: Double = prevSpeed
         if prevLocation != nil {
-            speed = latestLocation.distanceFromLocation(prevLocation!) / (time - prevTime)
+            speed = latestLocation.distanceFromLocation(prevLocation!)// / (time - prevTime)
             // Deals with speed spikes
             if speed > 100 {
                 speed = prevSpeed
@@ -83,33 +83,46 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
         prevTime = time
         
         /*
-         If speed is greater than 5m/s we assume that the user is driving. If speed is less than 0.5m/s
-         we assume that the user has stopped. If user was driving, has stopped, and remains under 5m/s
-         for 300 seconds then the stop is marked as a park and the user is not driving.
-         */
+         Simplified Parking
+        */
         
-        // User unparked and is driving
-        if !isDriving && speed >= 5 {
-            isDriving = true
-            // send unpark, current latitude and longitude
-        }
-        // User stop is not a park
-        else if stopSet && speed >= 5 {
-            stopSet = false
-        }
-        // User stop is a park
-        else if stopSet && speed < 5 && time - stopTime > 300 {
+        // park
+        if isDriving && speed < 5 {
             isDriving = false
-            stopSet = false
-            // send park, stop latitude and longitude
+            // send park
+        } else if !isDriving && speed >= 5 {
+            isDriving = true
+            // send unpark
         }
-        // User has stopped
-        else if isDriving && !stopSet && speed < 0.5 {
-            stopSet = true
-            stopLatitude = latitude
-            stopLongitude = longitude
-            stopTime = time
-        }
+        
+//        /*
+//         If speed is greater than 5m/s we assume that the user is driving. If speed is less than 0.5m/s
+//         we assume that the user has stopped. If user was driving, has stopped, and remains under 5m/s
+//         for 300 seconds then the stop is marked as a park and the user is not driving.
+//         */
+//        
+//        // User unparked and is driving
+//        if !isDriving && speed >= 5 {
+//            isDriving = true
+//            // send unpark, current latitude and longitude
+//        }
+//        // User stop is not a park
+//        else if stopSet && speed >= 5 {
+//            stopSet = false
+//        }
+//        // User stop is a park
+//        else if stopSet && speed < 5 && time - stopTime > 300 {
+//            isDriving = false
+//            stopSet = false
+//            // send park, stop latitude and longitude
+//        }
+//        // User has stopped
+//        else if isDriving && !stopSet && speed < 0.5 {
+//            stopSet = true
+//            stopLatitude = latitude
+//            stopLongitude = longitude
+//            stopTime = time
+//        }
     }
     
     func locationManager(manager: CLLocationManager, didFailWithError error: NSError) {
