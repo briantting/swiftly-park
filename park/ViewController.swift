@@ -29,6 +29,8 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
     // Tracks previous time
     var prevTime: Double = 0
     
+    var spot: CLLocationCoordinate2D = CLLocationCoordinate2D(latitude: 39.9526, longitude: -75.1652)
+    
     var locationManager: CLLocationManager = CLLocationManager()
     
     override func viewDidLoad() {
@@ -42,8 +44,8 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
        
         let philadelphia = CLLocationCoordinate2D(latitude: 39.9526, longitude: -75.1652)
         centerMapOnLocation(philadelphia)
-        let spot = ParkingSpot(philadelphia)
-        mapView.addAnnotation(spot)
+        let spot = philadelphia
+        mapView.addAnnotation(ParkingSpot(spot))
         
         locationManager.delegate = self
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
