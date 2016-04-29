@@ -10,7 +10,7 @@ import UIKit
 import MapKit
 import CoreLocation
 
-class ViewController: UIViewController, CLLocationManagerDelegate {
+class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDelegate {
 
     @IBOutlet weak var mapView: MKMapView!
     var server : HTTPManager!
@@ -50,9 +50,12 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
         let philadelphia = CLLocationCoordinate2D(latitude: 37.33182, longitude: -122.03118)
         centerMapOnLocation(philadelphia)
         let spot = philadelphia
+        let (ul, lr) = getMapBounds()
         mapView.addAnnotations([
             ParkingSpot(CLLocationCoordinate2D(latitude: 39.9527, longitude: -75.1651)),
-            ParkingSpot(spot)])
+            ParkingSpot(spot),
+            ParkingSpot(ul),
+            ParkingSpot(lr)])
         
         locationManager.delegate = self
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
@@ -115,7 +118,19 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
     }
     
     func locationManager(manager: CLLocationManager, didFailWithError error: NSError) {
-        
+    }
+    
+    func getMapBounds() -> (CLLocationCoordinate2D, CLLocationCoordinate2D) {
+        let region = self.mapView.region
+        let center = region.center
+        let span = region.span
+        let half_height = span.latitudeDelta/2
+        let half_width = span.longitudeDelta/2
+        let upperLeft = CLLocationCoordinate2D(latitude: center.latitude + half_height,
+                                               longitude: center.longitude - half_width)
+        let lowerRight = CLLocationCoordinate2D(latitude: center.latitude - half_height,
+                                               longitude: center.longitude + half_width)
+        return (upperLeft, lowerRight)
     }
     
 }
