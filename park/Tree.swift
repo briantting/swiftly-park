@@ -6,8 +6,6 @@
 //  Copyright © 2016 Ethan Brooks. All rights reserved.
 //
 
-import Foundation
-
 indirect enum Node<T where T:Comparable, T:Hashable> : CustomStringConvertible {
     case Leaf
     case Tree(Node<T>, T, Node<T>, Int)

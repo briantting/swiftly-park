@@ -9,49 +9,6 @@
 import UIKit
 import MapKit
 
-class parkingSpot: MKPointAnnotation {
-    var pinColor: UIColor
-    let lat: Double
-    let long: Double
-    
-    init(_ coordinate: CLLocationCoordinate2D) {
-        self.long = coordinate.latitude
-        self.lat = coordinate.longitude
-        self.pinColor = UIColor.brownColor()
-        super.init()
-        self.coordinate = coordinate
-    }
-}
-
-class longSpot: parkingSpot, Comparable {}
-class latSpot: parkingSpot, Comparable {
-    func asLongSpot() -> longSpot {
-        return longSpot(self.coordinate)
-    }
-}
-
-func < (left: longSpot, right: longSpot) -> Bool {
-    return left.lat < right.lat
-}
-
-func < (left: latSpot, right: latSpot) -> Bool {
-    return left.long < right.long
-}
-
-func getSpots(spotsByLat: Node<longSpot>,
-              spotsByLong: Node<latSpot>,
-              upperLeft: CLLocationCoordinate2D,
-              lowerRight: CLLocationCoordinate2D) -> Set<parkingSpot> {
-    
-    let upperLeftSpot = parkingSpot(upperLeft)
-    let lowerRightSpot = parkingSpot(lowerRight)
-    let spotsInXRange = spotsByLat.valuesBetween(upperLeftSpot as! longSpot,
-                                             and: lowerRightSpot as! longSpot)
-    return spotsByLong.valuesBetween(upperLeftSpot as! latSpot,
-                                and: lowerRightSpot as! latSpot,
-                                if: {spotsInXRange.contains($0.asLongSpot())})
-}
-
 class ViewController: UIViewController {
 
     @IBOutlet weak var mapView: MKMapView!
@@ -72,8 +29,9 @@ class ViewController: UIViewController {
        
         let philadelphia = CLLocationCoordinate2D(latitude: 39.9526, longitude: -75.1652)
         centerMapOnLocation(philadelphia)
-        let spot = parkingSpot(philadelphia)
+        let spot = ParkingSpot(philadelphia)
         mapView.addAnnotation(spot)
     }
 }
+
 
