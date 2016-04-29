@@ -45,7 +45,9 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
         let philadelphia = CLLocationCoordinate2D(latitude: 39.9526, longitude: -75.1652)
         centerMapOnLocation(philadelphia)
         let spot = philadelphia
-        mapView.addAnnotation(ParkingSpot(spot))
+        mapView.addAnnotations([
+            ParkingSpot(CLLocationCoordinate2D(latitude: 39.9527, longitude: -75.1651)),
+            ParkingSpot(spot)])
         
         locationManager.delegate = self
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
