@@ -12,10 +12,13 @@ import MapKit
 class ViewController: UIViewController {
 
     @IBOutlet weak var mapView: MKMapView!
+    var server : HTTPManager!
+
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        server = HTTPManager()
+        server.getParkingSpots()
         
         
         let regionDiameter: CLLocationDistance = 1000
