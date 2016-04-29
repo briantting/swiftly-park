@@ -38,7 +38,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         server = HTTPManager()
-        server.getParkingSpots()
+        server.getParkingSpots(mapView)
         
         
         let regionDiameter: CLLocationDistance = 1000
