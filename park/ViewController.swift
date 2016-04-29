@@ -13,6 +13,8 @@ import CoreLocation
 class ViewController: UIViewController, CLLocationManagerDelegate {
 
     @IBOutlet weak var mapView: MKMapView!
+    var server : HTTPManager!
+
     
     // Tracks if user is currently driving
     var isDriving: Bool = true
@@ -37,6 +39,9 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        server = HTTPManager()
+        server.getParkingSpots()
+        
         
         let regionDiameter: CLLocationDistance = 1000
         func centerMapOnLocation(location: CLLocationCoordinate2D) {
