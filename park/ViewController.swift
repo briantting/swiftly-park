@@ -15,7 +15,6 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
     @IBOutlet weak var mapView: MKMapView!
     var server : HTTPManager!
 
-    
     // Tracks if user is currently driving
     var isDriving: Bool = true
     // Tracks if user has stopped
@@ -30,6 +29,8 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
     var prevLocation: CLLocation? = nil
     // Tracks previous time
     var prevTime: Double = 0
+    // Tracks previous speed
+    var prevSpeed: Double = 2
     
     var spot: CLLocationCoordinate2D = CLLocationCoordinate2D(latitude: 39.9526, longitude: -75.1652)
     
@@ -40,14 +41,13 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
         server = HTTPManager()
         server.getParkingSpots(mapView)
         
-        
         let regionDiameter: CLLocationDistance = 1000
         func centerMapOnLocation(location: CLLocationCoordinate2D) {
             let coordinateRegion = MKCoordinateRegionMakeWithDistance(location, regionDiameter, regionDiameter)
             mapView.setRegion(coordinateRegion, animated: true)
         }
-       
-        let philadelphia = CLLocationCoordinate2D(latitude: 39.9526, longitude: -75.1652)
+
+        let philadelphia = CLLocationCoordinate2D(latitude: 37.33182, longitude: -122.03118)
         centerMapOnLocation(philadelphia)
         let spot = philadelphia
         mapView.addAnnotation(ParkingSpot(spot))
@@ -69,9 +69,15 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
         let longitude: Double = latestLocation.coordinate.longitude
         let time: Double = latestLocation.timestamp.timeIntervalSinceReferenceDate
         // Calculates speed
-        var speed: Double = 0
+        var speed: Double = prevSpeed
         if prevLocation != nil {
             speed = latestLocation.distanceFromLocation(prevLocation!) / (time - prevTime)
+            // Deals with speed spikes
+            if speed > 100 {
+                speed = prevSpeed
+            } else {
+                prevSpeed = speed
+            }
         }
         prevLocation = latestLocation
         prevTime = time
@@ -87,17 +93,17 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
             isDriving = true
             // send unpark, current latitude and longitude
         }
-            // User stop is not a park
+        // User stop is not a park
         else if stopSet && speed >= 5 {
             stopSet = false
         }
-            // User stop is a park
+        // User stop is a park
         else if stopSet && speed < 5 && time - stopTime > 300 {
             isDriving = false
             stopSet = false
             // send park, stop latitude and longitude
         }
-            // User has stopped
+        // User has stopped
         else if isDriving && !stopSet && speed < 0.5 {
             stopSet = true
             stopLatitude = latitude
