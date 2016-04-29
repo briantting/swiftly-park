@@ -93,17 +93,17 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
             isDriving = true
             // send unpark, current latitude and longitude
         }
-            // User stop is not a park
+        // User stop is not a park
         else if stopSet && speed >= 5 {
             stopSet = false
         }
-            // User stop is a park
+        // User stop is a park
         else if stopSet && speed < 5 && time - stopTime > 300 {
             isDriving = false
             stopSet = false
             // send park, stop latitude and longitude
         }
-            // User has stopped
+        // User has stopped
         else if isDriving && !stopSet && speed < 0.5 {
             stopSet = true
             stopLatitude = latitude
