@@ -38,6 +38,9 @@ func < (left: latSpot, right: latSpot) -> Bool {
     return left.long < right.long
 }
 
+let spotsByLat = Node<latSpot>.Leaf
+let spotsByLong = Node<longSpot>.Leaf
+
 func getSpots(spotsByLat: Node<longSpot>,
               spotsByLong: Node<latSpot>,
               upperLeft: CLLocationCoordinate2D,
