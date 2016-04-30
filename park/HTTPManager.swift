@@ -25,7 +25,7 @@ class HTTPManager {
             task?.cancel()
         }
         let request = "icecream"
-        let url = NSURL(string: "http://127.0.0.1:3000/\(request)")
+        let url = NSURL(string: "http://158.130.104.33:3000/\(request)")
         // 5
         task = session.dataTaskWithURL(url!) {
             data, response, error in

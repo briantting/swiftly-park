@@ -7,13 +7,13 @@
 //
 
 import UIKit
-import MapKit
 import CoreLocation
+import MapKit
 
 class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDelegate {
 
     @IBOutlet weak var mapView: MKMapView!
-    var server : HTTPManager!
+    var server: HTTPManager!
 
     // Tracks if user is currently driving
     var isDriving: Bool = true
@@ -21,31 +21,27 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
     var prevLocation: CLLocation? = nil
     // Tracks previous speed
     var prevSpeed: Double = 5
-    
-    var spot: CLLocationCoordinate2D = CLLocationCoordinate2D(latitude: 37.33182, longitude: -122.03118)
+    // PARKING SPOTS INSTANCE VARIABLE
     
     var locationManager: CLLocationManager = CLLocationManager()
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        server = HTTPManager()
         
+        server = HTTPManager()
         let (upperLeft, lowerRight) = getMapBounds()
-        server.getParkingSpots(upperLeft, lowerRight)
+        // THIS WILL RETURN PARKING SPOTS SET RETURN TO INSTANCE VARIABLE
+        // server.getParkingSpots(upperLeft, lowerRight)
         
         let regionDiameter: CLLocationDistance = 1000
         func centerMapOnLocation(location: CLLocationCoordinate2D) {
             let coordinateRegion = MKCoordinateRegionMakeWithDistance(location, regionDiameter, regionDiameter)
             mapView.setRegion(coordinateRegion, animated: true)
         }
-
+        
         let cupertino = CLLocationCoordinate2D(latitude: 37.33182, longitude: -122.03118)
         centerMapOnLocation(cupertino)
-        let (ul, lr) = getMapBounds()
-        mapView.addAnnotations([
-            ParkingSpot(cupertino),
-            ParkingSpot(ul),
-            ParkingSpot(lr)])
+        updateMap()
         
         locationManager.delegate = self
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
@@ -81,9 +77,17 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
             isDriving = true
             // server.postParkingSpot(latestLocation.coordinate, true)
         }
+        updateMap()
     }
     
     func locationManager(manager: CLLocationManager, didFailWithError error: NSError) {
+        
+    }
+    
+    func updateMap() {
+        mapView.removeAnnotations(mapView.annotations.filter() {$0 !== mapView.userLocation})
+        // THIS WILL ADD PARKING SPOTS TO MAP
+        // mapView.addAnnotation(PARKING SPOTS)
     }
     
     func getMapBounds() -> (CLLocationCoordinate2D, CLLocationCoordinate2D) {
@@ -100,5 +104,3 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
     }
     
 }
-
-
