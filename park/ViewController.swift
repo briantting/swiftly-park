@@ -22,6 +22,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
     // Tracks previous speed
     var prevSpeed: Double = 5
     // PARKING SPOTS INSTANCE VARIABLE
+    // parkingSpots
     
     var locationManager: CLLocationManager = CLLocationManager()
     
@@ -70,11 +71,13 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
         // Park
         if isDriving && speed < 5 {
             isDriving = false
+            // THIS SHOULD BE IMPLEMENTED
             // server.postParkingSpot(latestLocation.coordinate, false)
         }
         // Vacate
         else if !isDriving && speed >= 5 {
             isDriving = true
+            // THIS SHOULD BE IMPLEMENTED
             // server.postParkingSpot(latestLocation.coordinate, true)
         }
         updateMap()
@@ -96,10 +99,8 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
         let span = region.span
         let half_height = span.latitudeDelta/2
         let half_width = span.longitudeDelta/2
-        let upperLeft = CLLocationCoordinate2D(latitude: center.latitude + half_height,
-                                               longitude: center.longitude - half_width)
-        let lowerRight = CLLocationCoordinate2D(latitude: center.latitude - half_height,
-                                               longitude: center.longitude + half_width)
+        let upperLeft = CLLocationCoordinate2D(latitude: center.latitude + half_height, longitude: center.longitude - half_width)
+        let lowerRight = CLLocationCoordinate2D(latitude: center.latitude - half_height, longitude: center.longitude + half_width)
         return (upperLeft, lowerRight)
     }
     
