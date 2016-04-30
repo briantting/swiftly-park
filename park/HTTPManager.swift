@@ -16,32 +16,9 @@ class HTTPManager {
     // Will do the requesting and fetching of data
     var task: NSURLSessionDataTask?
     
-    func getParkingSpots(mapView : MKMapView) -> Void {
-        
-        let bounds : MKMapRect = mapView.visibleMapRect
-        let south = MKMapRectGetMaxY(bounds)
-        let north = MKMapRectGetMinY(bounds)
-        let west = MKMapRectGetMinX(bounds)
-        let east = MKMapRectGetMaxX(bounds)
-        let northWest = MKCoordinateForMapPoint(MKMapPoint(x: west, y: north))
-        let southEast = MKCoordinateForMapPoint(MKMapPoint(x: east, y: south))
-        
-        let westBound = northWest.longitude.description
-        let eastBound = southEast.longitude.description
-        let northBound = northWest.latitude.description
-        let southBound = southEast.latitude.description
-        
-        
-        print("north: \(north.description)")
-        print("south: \(south.description)")
-        
-        
-        print("West bound: \(westBound)")
-        print("East bound: \(eastBound)")
-        print("North bound: \(northBound)")
-        print("South bound: \(southBound)")
-        
-        
+    func getParkingSpots(upperLeft: CLLocationCoordinate2D, _ lowerRight: CLLocationCoordinate2D) -> Void {
+        print(upperLeft)
+        print(lowerRight)
         
         // Checks if task is already running. Cancels to avoid multiple requests.
         if task != nil {
