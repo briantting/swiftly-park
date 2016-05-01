@@ -19,14 +19,20 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
         
         // set parameters of map
         mapView.delegate = self
+
         let regionDiameter: CLLocationDistance = 1000
         func centerMapOnLocation(location: CLLocationCoordinate2D) {
             let coordinateRegion = MKCoordinateRegionMakeWithDistance(location, regionDiameter, regionDiameter)
             mapView.setRegion(coordinateRegion, animated: true)
         }
+
         // centers map on default location
+
         let cupertino = CLLocationCoordinate2D(latitude: 37.33182, longitude: -122.03118)
         centerMapOnLocation(cupertino)
+        let (upperLeft, lowerRight) = getMapBounds()
+        server = HTTPManager()
+        parkingSpots = server.getParkingSpots(upperLeft, lowerRight)
         
         // set parameters of location manager
         locationManager.delegate = self
@@ -35,6 +41,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
         locationManager.startUpdatingLocation()
         
         updateMap()
+
     }
     
     override func didReceiveMemoryWarning() {
@@ -91,6 +98,8 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
     }
     
     func mapView(mapView: MKMapView, regionDidChangeAnimated animated: Bool) {
+        updateMap()
+        
     }
     
 }
