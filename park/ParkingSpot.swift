@@ -9,43 +9,11 @@
 import Foundation
 import MapKit
 
-class ParkingSpot: MKPointAnnotation {
-//    var pinColor: UIColor
-    var lat: Double
-    var long: Double
-    var x: Double
-    var y: Double
-    
-    static let epsilon: Double = 5
-    
-    init(_ coordinate: CLLocationCoordinate2D) {
-        long = coordinate.latitude
-        lat = coordinate.longitude
-        let mapPoint = MKMapPointForCoordinate(coordinate)
-        x = mapPoint.x
-        y = mapPoint.y
-//        self.init(coordinate)
-        super.init()
-        self.coordinate = coordinate
-    }
-    
-    init(m mapPoint: MKMapPoint) {
-        x = mapPoint.x
-        y = mapPoint.y
-        let coordinate = MKCoordinateForMapPoint(mapPoint)
-        lat = coordinate.latitude
-        long = coordinate.longitude
-//        self.init(coordinate)
-        super.init()
-        self.coordinate = coordinate
-    }
-}
-
 func approxLessThan(left: Double, _ right: Double, _ epsilon: Double) -> Bool {
     return right - left > epsilon
 }
 
-func approxEqual(left: Double, _ right: Double, _ epsilon: Double) -> Bool {
+func almostEqual(left: Double, _ right: Double, _ epsilon: Double) -> Bool {
     return abs(left - right) < epsilon
 }
 
@@ -53,16 +21,40 @@ func <(left: XSpot, right: XSpot) -> Bool {
     return approxLessThan(left.x, right.x, ParkingSpot.epsilon)
 }
 
-func ==(left: XSpot, right: XSpot) -> Bool {
-    return approxEqual(left.x, right.x, ParkingSpot.epsilon)
-}
-
 func <(left: YSpot, right: YSpot) -> Bool {
     return approxLessThan(left.y, right.y, ParkingSpot.epsilon)
 }
 
-func ==(left: YSpot, right: YSpot) -> Bool {
-    return approxEqual(left.y, right.y, ParkingSpot.epsilon)
+class ParkingSpot: MKPointAnnotation {
+//    var pinColor: UIColor
+    var lat: Double
+    var long: Double
+    var x: Double
+    var y: Double
+    
+    override var description: String {
+        return "lat: \(lat), long: \(long)"
+    }
+    
+    static let epsilon: Double = 5
+    
+    init(_ coordinate: CLLocationCoordinate2D) {
+        lat = coordinate.latitude
+        long = coordinate.longitude
+        let mapPoint = MKMapPointForCoordinate(coordinate)
+        x = mapPoint.x
+        y = mapPoint.y
+        super.init()
+        self.coordinate = coordinate
+    }
+    
+    override func isEqual(object: AnyObject?) -> Bool {
+        if let spot = object as? ParkingSpot {
+            return almostEqual(x, spot.x, ParkingSpot.epsilon)
+                && almostEqual(y, spot.y, ParkingSpot.epsilon)
+        }
+        return false
+    }
 }
 
 class XSpot: ParkingSpot, Comparable { }
@@ -82,16 +74,14 @@ struct ParkingSpots {
         spotsByY = spotsByY.insert(YSpot(coordinate))
     }
     
-    mutating func addSpot(mapPoint: MKMapPoint) {
-        spotsByX = spotsByX.insert(XSpot(m: mapPoint))
-        spotsByY = spotsByY.insert(YSpot(m: mapPoint))
-    }
-    
     func getSpots(upperLeft: CLLocationCoordinate2D,
-                  _ lowerRight: CLLocationCoordinate2D) -> Set<ParkingSpot> {
+               _ lowerRight: CLLocationCoordinate2D) -> Set<ParkingSpot> {
         
-        let spotsInXRange = spotsByX.valuesBetween(XSpot(upperLeft),
-                           and: XSpot(lowerRight))
+        let spotsInXRange = spotsByX.valuesBetween(XSpot(upperLeft), and: XSpot(lowerRight))
+            .map({$0 as ParkingSpot})
+        print(upperLeft.latitude, upperLeft.longitude)
+        print(lowerRight.latitude, lowerRight.longitude)
+            
         return spotsByY.valuesBetween(YSpot(upperLeft),
                            and: YSpot(lowerRight),
                            if: {spotsInXRange.contains($0.asXSpot())})
