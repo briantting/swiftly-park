@@ -9,10 +9,11 @@
 import Foundation
 import MapKit
 
-class ParkingSpot: MKPointAnnotation {
+class ParkingSpot: MKPointAnnotation, Comparable {
     var pinColor: UIColor
     let lat: Double
     let long: Double
+    var value: Double? = nil
     static let epsilon: Double = 5
     
     init(_ coordinate: CLLocationCoordinate2D) {
@@ -24,31 +25,31 @@ class ParkingSpot: MKPointAnnotation {
     }
 }
 
-class longSpot: ParkingSpot, Comparable {}
-class latSpot: ParkingSpot, Comparable {
+class longSpot: ParkingSpot {
+    override init(_ coordinate: CLLocationCoordinate2D) {
+        super.init(coordinate)
+        self.value = coordinate.longitude
+    }
+}
+
+class latSpot: ParkingSpot {
+    override init(_ coordinate: CLLocationCoordinate2D) {
+        super.init(coordinate)
+        self.value = coordinate.latitude
+    }
+    
     func asLongSpot() -> longSpot {
         return longSpot(self.coordinate)
     }
 }
 
-func < (left: longSpot, right: longSpot) -> Bool {
-    return left.lat < right.lat
+
+func <(left: ParkingSpot, right: ParkingSpot) -> Bool {
+    return right.value! - left.value! > ParkingSpot.epsilon
 }
 
-func < (left: latSpot, right: latSpot) -> Bool {
-    return left.long < right.long
-}
-
-func almostEqual (left: Double, _ right: Double, epsilon: Double) -> Bool {
-    return abs(left - right) < epsilon
-}
-
-func == (left: longSpot, right: longSpot) -> Bool {
-    return almostEqual(left.long, right.long, epsilon: ParkingSpot.epsilon)
-}
-
-func == (left: latSpot, right: longSpot) -> Bool {
-    return almostEqual(left.long, right.long, epsilon: ParkingSpot.epsilon)
+func ==(left: ParkingSpot, right: ParkingSpot) -> Bool {
+    return abs(left.value! - right.value!) < ParkingSpot.epsilon
 }
 
 let spotsByLat = Node<latSpot>.Leaf
