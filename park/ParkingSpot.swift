@@ -9,13 +9,11 @@
 import Foundation
 import MapKit
 
-class ParkingSpot: MKPointAnnotation, Comparable {
+class ParkingSpot: MKPointAnnotation {
     var pinColor: UIColor
     let lat: Double
     let long: Double
     
-    // note any attempt to compare these will throw an exception unless inheriting class establishes a value
-    var value: Double? = nil
     static let epsilon: Double = 5
     
     init(_ coordinate: CLLocationCoordinate2D) {
@@ -27,28 +25,33 @@ class ParkingSpot: MKPointAnnotation, Comparable {
     }
 }
 
-
-func <(left: ParkingSpot, right: ParkingSpot) -> Bool {
-    return right.value! - left.value! > ParkingSpot.epsilon
+func approxLessThan(left: Double, _ right: Double, _ epsilon: Double) -> Bool {
+    return right - left > epsilon
 }
 
-func ==(left: ParkingSpot, right: ParkingSpot) -> Bool {
-    return abs(left.value! - right.value!) < ParkingSpot.epsilon
+func approxEqual(left: Double, _ right: Double, _ epsilon: Double) -> Bool {
+    return abs(left - right) < epsilon
 }
 
-class longSpot: ParkingSpot {
-    override init(_ coordinate: CLLocationCoordinate2D) {
-        super.init(coordinate)
-        self.value = coordinate.longitude
-    }
+func <(left: longSpot, right: longSpot) -> Bool {
+    return approxLessThan(left.long, right.long, ParkingSpot.epsilon)
 }
 
-class latSpot: ParkingSpot {
-    override init(_ coordinate: CLLocationCoordinate2D) {
-        super.init(coordinate)
-        self.value = coordinate.latitude
-    }
-    
+func ==(left: longSpot, right: longSpot) -> Bool {
+    return approxEqual(left.long, right.long, ParkingSpot.epsilon)
+}
+
+func <(left: latSpot, right: latSpot) -> Bool {
+    return approxLessThan(left.lat, right.lat, ParkingSpot.epsilon)
+}
+
+func ==(left: latSpot, right: latSpot) -> Bool {
+    return approxEqual(left.lat, right.lat, ParkingSpot.epsilon)
+}
+
+class longSpot: ParkingSpot, Comparable { }
+
+class latSpot: ParkingSpot, Comparable {
     func asLongSpot() -> longSpot {
         return longSpot(self.coordinate)
     }
