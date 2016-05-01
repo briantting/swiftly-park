@@ -29,9 +29,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
     override func viewDidLoad() {
         super.viewDidLoad()
         server = HTTPManager()
-        
-        let (upperLeft, lowerRight) = getMapBounds()
-        server.getParkingSpots(upperLeft, lowerRight)
+    
         
         let regionDiameter: CLLocationDistance = 1000
         func centerMapOnLocation(location: CLLocationCoordinate2D) {
@@ -41,11 +39,14 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
 
         let cupertino = CLLocationCoordinate2D(latitude: 37.33182, longitude: -122.03118)
         centerMapOnLocation(cupertino)
-        let (ul, lr) = getMapBounds()
+        
+        let (upperLeft, lowerRight) = getMapBounds()
+        let spots : [ParkingSpot] = server.getParkingSpots(upperLeft, lowerRight)
+        
         mapView.addAnnotations([
             ParkingSpot(cupertino),
-            ParkingSpot(ul),
-            ParkingSpot(lr)])
+            ParkingSpot(upperLeft),
+            ParkingSpot(lowerRight)])
         
         locationManager.delegate = self
         locationManager.desiredAccuracy = kCLLocationAccuracyBest

@@ -107,12 +107,13 @@ func getSpots(spotsByLat: Node<longSpot>,
               upperLeft: CLLocationCoordinate2D,
               lowerRight: CLLocationCoordinate2D) -> Set<ParkingSpot> {
     
-    let upperLeftSpot = ParkingSpot(upperLeft)
-    let lowerRightSpot = ParkingSpot(lowerRight)
-    let spotsInXRange = spotsByLat.valuesBetween(upperLeftSpot as! longSpot,
-                                                 and: lowerRightSpot as! longSpot)
-    return spotsByLong.valuesBetween(upperLeftSpot as! latSpot,
-                                     and: lowerRightSpot as! latSpot,
+    let spotsInXRange = spotsByLat.valuesBetween(longSpot(upperLeft),
+                                                 and: longSpot(lowerRight))
+    for tree in spotsInXRange {
+        print(tree.description)
+    }
+    return spotsByLong.valuesBetween(latSpot(upperLeft),
+                                     and: latSpot(lowerRight),
                                      if: {spotsInXRange.contains($0.asLongSpot())})
 }
 
@@ -499,12 +500,12 @@ struct HTTPRequest {
         self.cs = cs
         let lines = cs.fetchRequest()
         
-        //Get command and message
-        let commandIndex = lines[0].indexOf(" ")
-        let command = lines[0][0..<commandIndex]
-        let msgIndex = lines[0][commandIndex+1..<lines[0].characters.count].indexOf(" ")
-        commandMsg = lines[0][commandIndex + 1..<msgIndex]
         
+        //Get command and message
+        let requestMessage = lines[0].componentsSeparatedByString(" ")
+        let command = requestMessage[0]
+        commandMsg = requestMessage[1][1..<requestMessage[1].characters.count]
+
 
         // parse request headers
         for i in 1..<lines.count {
@@ -591,8 +592,13 @@ class Server {
 // ---- [ Process Get Command ] ------------------------------------------------------
 func processGetCommand(msg : String, _ latTree : Node<latSpot>, _ longTree : Node<longSpot>) -> String {
     let coordinates = convertStringToSpots(msg)
+    guard coordinates.count == 2 else {
+        return String("Invalid Get Request")
+    }
     let northWest = coordinates[0]
     let southEast = coordinates[1]
+    print(latTree.description)
+    print(longTree.description)
     let spotsWithinMap = getSpots(longTree, spotsByLong: latTree, upperLeft: northWest, lowerRight: southEast)
     return convertSpotsToString(spotsWithinMap)
 }
@@ -606,6 +612,8 @@ func processPostCommand(msg : String, _ latTree : Node<latSpot>, _ longTree : No
     }
 }
 
+// ---- [ Adapters for networking and binary trees] ------------------------------------------------------
+
 func convertSpotsToString(spots : Set<ParkingSpot>) -> String {
     var stringSpots = ""
     for spot in spots {
@@ -617,37 +625,53 @@ func convertSpotsToString(spots : Set<ParkingSpot>) -> String {
 }
 
 func convertStringToSpots(msg : String) -> [CLLocationCoordinate2D] {
-    var spots = [CLLocationCoordinate2D]()
-    var spotList = msg
-    while spotList.characters.count > 0 {
-        let firstIndex = spotList.indexOf(",")
-        
-        var secondIndex = spotList[firstIndex+1..<spotList.characters.count].indexOf(",")
-        if secondIndex == -1  {
-            secondIndex = spotList.characters.count
+    let coordinateList = msg.componentsSeparatedByString(",")
+    var latitudes = [Double]()
+    var longitudes = [Double]()
+    for (index, element) in coordinateList.enumerate() {
+        if index % 2 == 0 {
+            latitudes.append(Double(element)!)
+        } else {
+            longitudes.append(Double(element)!)
         }
-        let firstCoordinate = Double(spotList[0..<firstIndex])
-        let secondCoordinate = Double(spotList[firstIndex + 1..<secondIndex])
-        
-        spots.append(CLLocationCoordinate2D(latitude: firstCoordinate!, longitude: secondCoordinate!))
-        guard secondIndex != spotList.characters.count else {
-            break
-        }
-        spotList = spotList[secondIndex + 1..<spotList.characters.count]
-        
     }
+    
+    let spots = latitudes.enumerate().map ({CLLocationCoordinate2D(latitude: latitudes[$0.index], longitude: longitudes[$0.index])})
+    print(spots)
     
     return spots
 }
 
+// ---- [ Populate trees with default parking spots ] ------------------------------------------------------
+
+func setupDefaultParkingSpots(spotsByLat : Node<latSpot>, _ spotsByLong : Node<longSpot>) -> (Node<latSpot>, Node<longSpot>) {
+    let appleCampus = CLLocationCoordinate2D(latitude: 37.33182, longitude: -122.03118)
+    let ducati = CLLocationCoordinate2D(latitude: 37.3276574, longitude: -122.0350399)
+    let bagelStreetCafe = CLLocationCoordinate2D(latitude: 37.3315193, longitude: -122.0327043)
+    
+    let locations = [appleCampus, ducati, bagelStreetCafe]
+    
+    var latSpotRoot = spotsByLat
+    var longSpotRoot = spotsByLong
+    
+    for location in locations {
+        latSpotRoot = latSpotRoot.insert(latSpot(location))
+        longSpotRoot = longSpotRoot.insert(longSpot(location))
+    }
+    
+    return (latSpotRoot, longSpotRoot)
+}
 
 // ---- [ server setup ] ------------------------------------------------------
 
 let app = Server(port: port)
-let spotsByLat = Node<latSpot>.Leaf
-let spotsByLong = Node<longSpot>.Leaf
+var spotsByLat = Node<latSpot>.Leaf
+var spotsByLong = Node<longSpot>.Leaf
 
 print("Running server on port \(port)")
+let treeTuple = setupDefaultParkingSpots(spotsByLat, spotsByLong)
+spotsByLat = treeTuple.0
+spotsByLong = treeTuple.1
 
 app.run() {
     request, response -> () in
@@ -672,6 +696,7 @@ app.run() {
         processPostCommand(request.commandMsg, spotsByLat, spotsByLong)
         responseMsg = "Post successful"
     }
-    response.sendRaw("HTTP/1.1 200 OK\n\nHello, World!\n")
+    print(responseMsg)
+    response.sendRaw("HTTP/1.1 200 OK\n\n\(responseMsg)\n")
 }
 
