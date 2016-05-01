@@ -30,6 +30,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        
         server = HTTPManager()
         let (upperLeft, lowerRight) = getMapBounds()
         // THIS WILL RETURN PARKING SPOTS SET RETURN TO INSTANCE VARIABLE
@@ -44,17 +45,10 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
         }
         
         
-        
         let cupertino = CLLocationCoordinate2D(latitude: 37.33182, longitude: -122.03118)
         centerMapOnLocation(cupertino)
-//        updateMap()
         
-        // FOR DEBUGGING
-        var spots = ParkingSpots()
-//        let spot1 = CLLocationCoordinate2D(latitude: 37.33181, longitude: -122.03119)
-        spots.addSpot(cupertino)
-//        mapView.addAnnotations(Array(spots.getSpots(upperLeft, lowerRight)))
-        mapView.addAnnotation(ParkingSpot(cupertino))
+        print("TEST TEST")
         
         locationManager.delegate = self
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
@@ -103,6 +97,15 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
         mapView.removeAnnotations(mapView.annotations.filter() {$0 !== mapView.userLocation})
         // THIS WILL ADD PARKING SPOTS TO MAP
         // mapView.addAnnotation(PARKING SPOTS)
+        let cupertino = CLLocationCoordinate2D(latitude: 37.33182, longitude: -122.03118)
+        
+        // FOR DEBUGGING
+//        var spots = ParkingSpots()
+//        let spot1 = CLLocationCoordinate2D(latitude: 37.33181, longitude: -122.03119)
+//        spots.addSpot(cupertino)
+//        mapView.addAnnotations(Array(spots.getSpots(upperLeft, lowerRight)))
+        print(ParkingSpot(cupertino))
+        mapView.addAnnotation(ParkingSpot(cupertino))
     }
     
     func getMapBounds() -> (CLLocationCoordinate2D, CLLocationCoordinate2D) {
@@ -119,7 +122,6 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
     }
     
     func mapView(mapView: MKMapView, regionDidChangeAnimated animated: Bool) {
-        print("TEST TEST")
     }
     
 }
