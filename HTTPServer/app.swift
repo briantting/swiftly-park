@@ -684,9 +684,9 @@ func convertSpotsToString(spots : Set<ParkingSpot>) -> String {
     for spot in spots {
         
         //Look into fixing order
-        stringSpots += String(spot.long)
-        stringSpots += ","
         stringSpots += String(spot.lat)
+        stringSpots += ","
+        stringSpots += String(spot.long)
         stringSpots += ","
     }
     stringSpots = stringSpots[0..<stringSpots.characters.count-1]

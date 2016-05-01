@@ -76,13 +76,14 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
         // adds new parking spots
         let (upperLeft, lowerRight) = getMapBounds()
         let parkingSpots = server.getParkingSpots(upperLeft, lowerRight)
-        for spot in parkingSpots {
-            print(spot)
-        }
+
         //mapView.addAnnotations(parkingSpots)
         
         let cupertino = CLLocationCoordinate2D(latitude: 37.33182, longitude: -122.03118)
         mapView.addAnnotation(ParkingSpot(cupertino))
+        for spot in parkingSpots {
+            mapView.addAnnotation(spot)
+        }
     }
     
     // gets map bounds
