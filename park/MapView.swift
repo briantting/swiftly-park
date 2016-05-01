@@ -11,4 +11,11 @@ import MapKit
 
 extension MKMapView {
     
+    public func setView(center: CLLocationCoordinate2D, diameter: CLLocationDistance) {
+        let coordinateRegion = MKCoordinateRegionMakeWithDistance(
+            center, diameter, diameter)
+        self.setRegion(coordinateRegion, animated: true)
+    }
+    
+    
 }

@@ -2,6 +2,26 @@ import UIKit
 import CoreLocation
 import MapKit
 
+extension MKMapView {
+    
+    func setView(center: CLLocationCoordinate2D, diameter: CLLocationDistance) {
+        let coordinateRegion = MKCoordinateRegionMakeWithDistance(
+            center, diameter, diameter)
+        self.setRegion(coordinateRegion, animated: true)
+    }
+    
+    func getMapBounds() -> (CLLocationCoordinate2D, CLLocationCoordinate2D) {
+        let region = self.region
+        let center = region.center
+        let span = region.span
+        let half_height = span.latitudeDelta/2
+        let half_width = span.longitudeDelta/2
+        let upperLeft = CLLocationCoordinate2D(latitude: center.latitude + half_height, longitude: center.longitude - half_width)
+        let lowerRight = CLLocationCoordinate2D(latitude: center.latitude - half_height, longitude: center.longitude + half_width)
+        return (upperLeft, lowerRight)
+    }
+}
+
 class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDelegate {
 
     @IBOutlet weak var mapView: MKMapView!
@@ -15,16 +35,11 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        let cupertino = CLLocationCoordinate2D(latitude: 37.33182, longitude: -122.03118)
+        
         // set parameters of map
         mapView.delegate = self
-        let regionDiameter: CLLocationDistance = 1000
-        func centerMapOnLocation(location: CLLocationCoordinate2D) {
-            let coordinateRegion = MKCoordinateRegionMakeWithDistance(location, regionDiameter, regionDiameter)
-            mapView.setRegion(coordinateRegion, animated: true)
-        }
-        // centers map on default location
-        let cupertino = CLLocationCoordinate2D(latitude: 37.33182, longitude: -122.03118)
-        centerMapOnLocation(cupertino)
+        mapView.setView(cupertino, diameter: 1000)
         
         // set parameters of location manager
         locationManager.delegate = self
@@ -74,20 +89,9 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
         // removes old parking spots
         mapView.removeAnnotations(mapView.annotations.filter() {$0 !== mapView.userLocation})
         // adds new parking spots
-        let (upperLeft, lowerRight) = getMapBounds()
+        let (upperLeft, lowerRight) = mapView.getMapBounds()
         mapView.addAnnotations(server.getParkingSpots(upperLeft, lowerRight))
     }
     
     // gets map bounds
-    func getMapBounds() -> (CLLocationCoordinate2D, CLLocationCoordinate2D) {
-        let region = self.mapView.region
-        let center = region.center
-        let span = region.span
-        let half_height = span.latitudeDelta/2
-        let half_width = span.longitudeDelta/2
-        let upperLeft = CLLocationCoordinate2D(latitude: center.latitude + half_height, longitude: center.longitude - half_width)
-        let lowerRight = CLLocationCoordinate2D(latitude: center.latitude - half_height, longitude: center.longitude + half_width)
-        return (upperLeft, lowerRight)
-    }
-    
 }
