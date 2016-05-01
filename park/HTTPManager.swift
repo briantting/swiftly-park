@@ -10,6 +10,7 @@ import Foundation
 import MapKit
 
 class HTTPManager {
+    let ipAddress = "http://127.0.0.1:3000/"
     
     // Sets up the URL session
     let session = NSURLSession(configuration: NSURLSessionConfiguration.defaultSessionConfiguration())
@@ -23,7 +24,7 @@ class HTTPManager {
             task?.cancel()
         }
         let request = convertCoordinateToString(upperLeft, lowerRight)
-        let url = NSURL(string: "http://127.0.0.1:3000/\(request)")
+        let url = NSURL(string: "\(ipAddress)\(request)")
         
         // 5
         task = session.dataTaskWithURL(url!) {
