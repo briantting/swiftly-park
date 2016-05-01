@@ -50,18 +50,25 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
         let (upperLeft, lowerRight) = getMapBounds()
         server = HTTPManager()
         parkingSpots = server.getParkingSpots(upperLeft, lowerRight)
+        print(parkingSpots)
         
         mapView.addAnnotations([
             ParkingSpot(cupertino),
             ParkingSpot(upperLeft),
             ParkingSpot(lowerRight)])
-        
+        mapView.addAnnotations(parkingSpots)
         updateMap()
         
         locationManager.delegate = self
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
         locationManager.requestWhenInUseAuthorization()
         locationManager.startUpdatingLocation()
+        sleep(5)
+        testAddCurrentLocation()
+    }
+    
+    func testAddCurrentLocation() -> Void {
+        server.postParkingSpot(CLLocationCoordinate2D(latitude: 37.328849, longitude: -122.032144), addSpot: true)
     }
     
     override func didReceiveMemoryWarning() {
@@ -105,6 +112,12 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
         mapView.removeAnnotations(mapView.annotations.filter() {$0 !== mapView.userLocation})
         // THIS WILL ADD PARKING SPOTS TO MAP
         mapView.addAnnotation(ParkingSpot(cupertino))
+        if parkingSpots != nil {
+            mapView.addAnnotations(parkingSpots)
+            print(parkingSpots)
+        }
+        
+        
     }
     
     func getMapBounds() -> (CLLocationCoordinate2D, CLLocationCoordinate2D) {
@@ -122,6 +135,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
     
     func mapView(mapView: MKMapView, regionDidChangeAnimated animated: Bool) {
         print("TEST TEST")
+        updateMap()
     }
     
 }

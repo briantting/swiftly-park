@@ -629,11 +629,24 @@ func processGetCommand(msg : String, _ latTree : Node<latSpot>, _ longTree : Nod
 
 // ---- [ Process Post Command ] ------------------------------------------------------
 func processPostCommand(msg : String, _ latTree : Node<latSpot>, _ longTree : Node<longSpot>) -> Void {
-    let coordinates = convertStringToSpots(msg)
-    for coordinate in coordinates {
-        latTree.insert(latSpot(coordinate))
-        longTree.insert(longSpot(coordinate))
+    let commandIndex = msg.indexOf(",")
+    let command = msg[0..<commandIndex]
+    let stringCoordinates = msg[commandIndex+1..<msg.characters.count]
+    let coordinates = convertStringToSpots(stringCoordinates)
+    
+    if command == "ADD" {
+        for coordinate in coordinates {
+            latTree.insert(latSpot(coordinate))
+            longTree.insert(longSpot(coordinate))
+        }
     }
+        
+        //TODO add a command for deleting from binary tree
+    else {
+        print("Invalid POST command")
+    }
+    
+    
 }
 
 // ---- [ Adapters for networking and binary trees] ------------------------------------------------------

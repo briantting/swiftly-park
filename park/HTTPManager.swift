@@ -18,15 +18,13 @@ class HTTPManager {
     var spots = [ParkingSpot]()
     
     func getParkingSpots(upperLeft: CLLocationCoordinate2D, _ lowerRight: CLLocationCoordinate2D) -> [ParkingSpot] {
-        print(upperLeft)
-        print(lowerRight)
-        
         // Checks if task is already running. Cancels to avoid multiple requests.
         if task != nil {
             task?.cancel()
         }
         let request = "37.336325160217136,-122.03684589313772,37.327314839782836,-122.02551410686232"
         let url = NSURL(string: "http://127.0.0.1:3000/\(request)")
+        
         // 5
         task = session.dataTaskWithURL(url!) {
             data, response, error in
@@ -44,6 +42,8 @@ class HTTPManager {
         }
         // Starts task
         task?.resume()
+        //Need to wait for task to complete
+        sleep(1)
         
         return self.spots
     }
@@ -64,6 +64,42 @@ class HTTPManager {
         let spots = latitudes.enumerate().map ({ParkingSpot(CLLocationCoordinate2D(latitude: latitudes[$0.index], longitude: longitudes[$0.index]))})
         
         return spots
+    }
+    
+    func postParkingSpot(coordinate : CLLocationCoordinate2D, addSpot : Bool) -> Void {
+        if task != nil {
+            task?.cancel()
+        }
+        let request = convertCoordinateToString(coordinate, addSpot)
+        let url = NSURL(string: "http://127.0.0.1:3000/\(request)")
+        let postURL = NSMutableURLRequest(URL: url!)
+        postURL.HTTPMethod = "POST"
+        task = session.dataTaskWithRequest(postURL) {
+            data, response, error in
+            guard data != nil && response != nil && error == nil else {
+                print(error.debugDescription)
+                return
+            }
+            
+        }
+        
+        task?.resume()
+        
+    }
+    
+    func convertCoordinateToString(coordinate : CLLocationCoordinate2D, _ addSpot : Bool) -> String {
+        var stringCoordinate = String("")
+        if addSpot {
+            stringCoordinate += "ADD,"
+        } else {
+            stringCoordinate += "REMOVE,"
+        }
+        stringCoordinate += String(coordinate.latitude)
+        stringCoordinate += ","
+        stringCoordinate += String(coordinate.longitude)
+        
+        return stringCoordinate
+        
     }
     
 }
