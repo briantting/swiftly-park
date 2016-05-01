@@ -13,6 +13,8 @@ class ParkingSpot: MKPointAnnotation, Comparable {
     var pinColor: UIColor
     let lat: Double
     let long: Double
+    
+    // note any attempt to compare these will throw an exception unless inheriting class establishes a value
     var value: Double? = nil
     static let epsilon: Double = 5
     
@@ -23,6 +25,15 @@ class ParkingSpot: MKPointAnnotation, Comparable {
         super.init()
         self.coordinate = coordinate
     }
+}
+
+
+func <(left: ParkingSpot, right: ParkingSpot) -> Bool {
+    return right.value! - left.value! > ParkingSpot.epsilon
+}
+
+func ==(left: ParkingSpot, right: ParkingSpot) -> Bool {
+    return abs(left.value! - right.value!) < ParkingSpot.epsilon
 }
 
 class longSpot: ParkingSpot {
@@ -44,13 +55,6 @@ class latSpot: ParkingSpot {
 }
 
 
-func <(left: ParkingSpot, right: ParkingSpot) -> Bool {
-    return right.value! - left.value! > ParkingSpot.epsilon
-}
-
-func ==(left: ParkingSpot, right: ParkingSpot) -> Bool {
-    return abs(left.value! - right.value!) < ParkingSpot.epsilon
-}
 
 let spotsByLat = Node<latSpot>.Leaf
 let spotsByLong = Node<longSpot>.Leaf
