@@ -92,6 +92,10 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
     
     func updateMap() {
         mapView.removeAnnotations(mapView.annotations.filter() {$0 !== mapView.userLocation})
+        let cupertino = CLLocationCoordinate2D(latitude: 37.33182, longitude: -122.03118)
+        mapView.addAnnotation(ParkingSpot(cupertino))
+        
+        //mapView.addAnnotation(mapView.userLocation)
         // THIS WILL ADD PARKING SPOTS TO MAP
         // mapView.addAnnotation(PARKING SPOTS)
     }
@@ -102,10 +106,8 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
         let span = region.span
         let half_height = span.latitudeDelta/2
         let half_width = span.longitudeDelta/2
-        let upperLeft = CLLocationCoordinate2D(latitude: center.latitude + half_height,
-                                               longitude: center.longitude - half_width)
-        let lowerRight = CLLocationCoordinate2D(latitude: center.latitude - half_height,
-                                                longitude: center.longitude + half_width)
+        let upperLeft = CLLocationCoordinate2D(latitude: center.latitude + half_height, longitude: center.longitude - half_width)
+        let lowerRight = CLLocationCoordinate2D(latitude: center.latitude - half_height, longitude: center.longitude + half_width)
         return (upperLeft, lowerRight)
     }
     
