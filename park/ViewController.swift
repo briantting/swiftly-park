@@ -51,12 +51,12 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
         // Park
         if isDriving && speed < 5 {
             isDriving = false
-            server.postParkingSpot(latestLocation.coordinate, false)
+//            server.postParkingSpot(latestLocation.coordinate, false)
         }
         // Vacate
         else if !isDriving && speed >= 5 {
             isDriving = true
-            server.postParkingSpot(latestLocation.coordinate, true)
+//            server.postParkingSpot(latestLocation.coordinate, true)
         }
         updateMap()
     }
