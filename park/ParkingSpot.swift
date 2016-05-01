@@ -19,8 +19,8 @@ class ParkingSpot: MKPointAnnotation {
     static let epsilon: Double = 5
     
     init(_ coordinate: CLLocationCoordinate2D) {
-        long = coordinate.latitude
-        lat = coordinate.longitude
+        lat = coordinate.latitude
+        long = coordinate.longitude
         let mapPoint = MKMapPointForCoordinate(coordinate)
         x = mapPoint.x
         y = mapPoint.y
@@ -53,16 +53,8 @@ func <(left: XSpot, right: XSpot) -> Bool {
     return approxLessThan(left.x, right.x, ParkingSpot.epsilon)
 }
 
-func ==(left: XSpot, right: XSpot) -> Bool {
-    return approxEqual(left.x, right.x, ParkingSpot.epsilon)
-}
-
 func <(left: YSpot, right: YSpot) -> Bool {
     return approxLessThan(left.y, right.y, ParkingSpot.epsilon)
-}
-
-func ==(left: YSpot, right: YSpot) -> Bool {
-    return approxEqual(left.y, right.y, ParkingSpot.epsilon)
 }
 
 class XSpot: ParkingSpot, Comparable { }
@@ -92,6 +84,9 @@ struct ParkingSpots {
         
         let spotsInXRange = spotsByX.valuesBetween(XSpot(upperLeft),
                            and: XSpot(lowerRight))
+        print(upperLeft.latitude, upperLeft.longitude)
+        print(lowerRight.latitude, lowerRight.longitude)
+            
         return spotsByY.valuesBetween(YSpot(upperLeft),
                            and: YSpot(lowerRight),
                            if: {spotsInXRange.contains($0.asXSpot())})

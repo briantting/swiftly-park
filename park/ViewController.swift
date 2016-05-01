@@ -56,7 +56,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
         let cupertino = CLLocationCoordinate2D(latitude: 37.33182, longitude: -122.03118)
         centerMapOnLocation(cupertino)
         
-        mapView.addAnnotation(Pin(coordinate: cupertino))
+        updateMap()
         
         locationManager.delegate = self
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
@@ -103,20 +103,15 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
     
     func updateMap() {
         mapView.removeAnnotations(mapView.annotations.filter() {$0 !== mapView.userLocation})
-        let cupertino = CLLocationCoordinate2D(latitude: 37.33182, longitude: -122.03118)
-        mapView.addAnnotation(ParkingSpot(cupertino))
-        
-        //mapView.addAnnotation(mapView.userLocation)
-        // THIS WILL ADD PARKING SPOTS TO MAP
-        // mapView.addAnnotation(PARKING SPOTS)
         
         // FOR DEBUGGING
+//        let (upperLeft, lowerRight) = getMapBounds()
 //        var spots = ParkingSpots()
-//        let spot1 = CLLocationCoordinate2D(latitude: 37.33181, longitude: -122.03119)
+//        let spot1 = CLLocationCoordinate2D(latitude: 37.33170, longitude: -122.03119)
 //        spots.addSpot(cupertino)
 //        mapView.addAnnotations(Array(spots.getSpots(upperLeft, lowerRight)))
-        print(ParkingSpot(cupertino))
-        mapView.addAnnotation(ParkingSpot(cupertino))
+        
+        //mapView.addAnnotation(mapView.userLocation)
     }
     
     func getMapBounds() -> (CLLocationCoordinate2D, CLLocationCoordinate2D) {
