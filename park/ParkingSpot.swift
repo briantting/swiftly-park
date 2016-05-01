@@ -57,8 +57,6 @@ class latSpot: ParkingSpot, Comparable {
     }
 }
 
-
-
 let spotsByLat = Node<latSpot>.Leaf
 let spotsByLong = Node<longSpot>.Leaf
 
