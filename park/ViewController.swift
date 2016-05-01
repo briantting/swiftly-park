@@ -107,9 +107,9 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
         // FOR DEBUGGING
 //        let (upperLeft, lowerRight) = getMapBounds()
 //        var spots = ParkingSpots()
-//        let spot1 = CLLocationCoordinate2D(latitude: 37.33170, longitude: -122.03119)
+        let spot = CLLocationCoordinate2D(latitude: 37.33170, longitude: -122.03119)
 //        spots.addSpot(cupertino)
-//        mapView.addAnnotations(Array(spots.getSpots(upperLeft, lowerRight)))
+        mapView.addAnnotation(ParkingSpot(spot))
         
         //mapView.addAnnotation(mapView.userLocation)
     }
@@ -126,6 +126,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
     }
     
     func mapView(mapView: MKMapView, regionDidChangeAnimated animated: Bool) {
+        updateMap()
     }
     
 }
