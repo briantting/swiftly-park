@@ -13,6 +13,7 @@ import MapKit
 class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDelegate {
 
     @IBOutlet weak var mapView: MKMapView!
+    
     var server: HTTPManager!
 
     // Tracks if user is currently driving
@@ -34,6 +35,8 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
         // THIS WILL RETURN PARKING SPOTS SET RETURN TO INSTANCE VARIABLE
         // server.getParkingSpots(upperLeft, lowerRight)
         
+        // set paramaeters of initial map to be displayed
+        mapView.delegate = self // make ViewController responsive to changes in mapView
         let regionDiameter: CLLocationDistance = 1000
         func centerMapOnLocation(location: CLLocationCoordinate2D) {
             let coordinateRegion = MKCoordinateRegionMakeWithDistance(location, regionDiameter, regionDiameter)
@@ -99,9 +102,15 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
         let span = region.span
         let half_height = span.latitudeDelta/2
         let half_width = span.longitudeDelta/2
-        let upperLeft = CLLocationCoordinate2D(latitude: center.latitude + half_height, longitude: center.longitude - half_width)
-        let lowerRight = CLLocationCoordinate2D(latitude: center.latitude - half_height, longitude: center.longitude + half_width)
+        let upperLeft = CLLocationCoordinate2D(latitude: center.latitude + half_height,
+                                               longitude: center.longitude - half_width)
+        let lowerRight = CLLocationCoordinate2D(latitude: center.latitude - half_height,
+                                                longitude: center.longitude + half_width)
         return (upperLeft, lowerRight)
+    }
+    
+    func mapView(mapView: MKMapView, regionDidChangeAnimated animated: Bool) {
+        print("TEST TEST")
     }
     
 }
