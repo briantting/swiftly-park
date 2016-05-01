@@ -13,6 +13,7 @@ class ParkingSpot: MKPointAnnotation {
     var pinColor: UIColor
     let lat: Double
     let long: Double
+    static let epsilon: Double = 5
     
     init(_ coordinate: CLLocationCoordinate2D) {
         self.long = coordinate.latitude
@@ -36,6 +37,18 @@ func < (left: longSpot, right: longSpot) -> Bool {
 
 func < (left: latSpot, right: latSpot) -> Bool {
     return left.long < right.long
+}
+
+func almostEqual (left: Double, _ right: Double, epsilon: Double) -> Bool {
+    return abs(left - right) < epsilon
+}
+
+func == (left: longSpot, right: longSpot) -> Bool {
+    return almostEqual(left.long, right.long, epsilon: ParkingSpot.epsilon)
+}
+
+func == (left: latSpot, right: longSpot) -> Bool {
+    return almostEqual(left.long, right.long, epsilon: ParkingSpot.epsilon)
 }
 
 let spotsByLat = Node<latSpot>.Leaf
