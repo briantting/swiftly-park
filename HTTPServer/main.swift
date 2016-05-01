@@ -2,6 +2,7 @@
  * File: main.swift
  * Desc: Currently testing a basic HTTP server using Swift
  * Auth: Cezary Wojcik
+ * Modified by: Brendon Lavernia
  */
 
 // ---- [ includes ] ----------------------------------------------------------
