@@ -19,6 +19,7 @@
 		AA480CF31CBC1231008294D0 /* parkUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA480CF21CBC1231008294D0 /* parkUITests.swift */; };
 		AA480D011CBC1279008294D0 /* Tree.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA480D001CBC1279008294D0 /* Tree.swift */; };
 		AA78DB831CD137EA0038331E /* ParkingSpot.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0B463E1CCFF7C8001F9ECD /* ParkingSpot.swift */; };
+		AA9C9FF51CD68ED40043AA6C /* Util.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA9C9FF41CD68ED40043AA6C /* Util.swift */; };
 		AAE2BD241CCAF0A900CBA51E /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AAE2BD231CCAF0A900CBA51E /* MapKit.framework */; };
 /* End PBXBuildFile section */
 
@@ -57,6 +58,7 @@
 		AA480CF21CBC1231008294D0 /* parkUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = parkUITests.swift; sourceTree = "<group>"; };
 		AA480CF41CBC1231008294D0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		AA480D001CBC1279008294D0 /* Tree.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Tree.swift; sourceTree = "<group>"; };
+		AA9C9FF41CD68ED40043AA6C /* Util.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Util.swift; sourceTree = "<group>"; };
 		AAE2BD231CCAF0A900CBA51E /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
@@ -126,6 +128,7 @@
 				AA480CDB1CBC1231008294D0 /* LaunchScreen.storyboard */,
 				AA480CDE1CBC1231008294D0 /* Info.plist */,
 				AA0B463E1CCFF7C8001F9ECD /* ParkingSpot.swift */,
+				AA9C9FF41CD68ED40043AA6C /* Util.swift */,
 				784D01D31CD3E1DA00613F71 /* HTTPManager.swift */,
 			);
 			name = park;
@@ -301,6 +304,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				AA480CE81CBC1231008294D0 /* parkTests.swift in Sources */,
+				AA9C9FF51CD68ED40043AA6C /* Util.swift in Sources */,
 				784D01D41CD3E1DA00613F71 /* HTTPManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
