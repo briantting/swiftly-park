@@ -5,7 +5,7 @@ import MapKit
 class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDelegate {
 
     @IBOutlet weak var mapView: MKMapView!
-    var server: HTTPManager!
+    var server: HTTPManager = HTTPManager()
 
     var isDriving: Bool = true // tracks if user is driving
     var prevLocation: CLLocation? = nil // tracks previous location for speed calculation
@@ -14,40 +14,30 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        server = HTTPManager()
-        
+
         // set parameters of map
         mapView.delegate = self
-
         let regionDiameter: CLLocationDistance = 1000
         func centerMapOnLocation(location: CLLocationCoordinate2D) {
             let coordinateRegion = MKCoordinateRegionMakeWithDistance(location, regionDiameter, regionDiameter)
             mapView.setRegion(coordinateRegion, animated: true)
         }
-
         // centers map on default location
-
         let cupertino = CLLocationCoordinate2D(latitude: 37.33182, longitude: -122.03118)
         centerMapOnLocation(cupertino)
-        let (upperLeft, lowerRight) = getMapBounds()
-        server = HTTPManager()
-        parkingSpots = server.getParkingSpots(upperLeft, lowerRight)
         
         // set parameters of location manager
         locationManager.delegate = self
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
         locationManager.requestWhenInUseAuthorization()
         locationManager.startUpdatingLocation()
-        
-        updateMap()
-
     }
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
     }
     
+    // updates on new location
     func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         let latestLocation: CLLocation = locations[locations.count - 1]
 
@@ -74,18 +64,21 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
     func locationManager(manager: CLLocationManager, didFailWithError error: NSError) {
     }
     
+    // updates on new view
+    func mapView(mapView: MKMapView, regionDidChangeAnimated animated: Bool) {
+        updateMap()
+    }
+    
+    // updates annotations
     func updateMap() {
         // removes old parking spots
         mapView.removeAnnotations(mapView.annotations.filter() {$0 !== mapView.userLocation})
         // adds new parking spots
         let (upperLeft, lowerRight) = getMapBounds()
         mapView.addAnnotations(server.getParkingSpots(upperLeft, lowerRight))
-        
-//        // Test
-//        let cupertino = CLLocationCoordinate2D(latitude: 37.33182, longitude: -122.03118)
-//        mapView.addAnnotation(ParkingSpot(cupertino))
     }
     
+    // gets map bounds
     func getMapBounds() -> (CLLocationCoordinate2D, CLLocationCoordinate2D) {
         let region = self.mapView.region
         let center = region.center
@@ -95,11 +88,6 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
         let upperLeft = CLLocationCoordinate2D(latitude: center.latitude + half_height, longitude: center.longitude - half_width)
         let lowerRight = CLLocationCoordinate2D(latitude: center.latitude - half_height, longitude: center.longitude + half_width)
         return (upperLeft, lowerRight)
-    }
-    
-    func mapView(mapView: MKMapView, regionDidChangeAnimated animated: Bool) {
-        updateMap()
-        
     }
     
 }
