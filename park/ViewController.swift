@@ -1,67 +1,40 @@
-//
-//  ViewController.swift
-//  park
-//
-//  Created by Ethan Brooks on 4/11/16.
-//  Copyright © 2016 Ethan Brooks. All rights reserved.
-//
-
 import UIKit
 import CoreLocation
 import MapKit
 
-class Pin: NSObject, MKAnnotation {
-    let coordinate: CLLocationCoordinate2D
-    
-    init(coordinate: CLLocationCoordinate2D) {
-        self.coordinate = coordinate
-    }
-}
-
 class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDelegate {
 
     @IBOutlet weak var mapView: MKMapView!
-    
     var server: HTTPManager!
 
-    // Tracks if user is currently driving
-    var isDriving: Bool = true
-    // Tracks previous location
-    var prevLocation: CLLocation? = nil
-    // Tracks previous speed
-    var prevSpeed: Double = 5
-    // PARKING SPOTS INSTANCE VARIABLE
-    // parkingSpots
+    var isDriving: Bool = true // tracks if user is driving
+    var prevLocation: CLLocation? = nil // tracks previous location for speed calculation
     
     var locationManager: CLLocationManager = CLLocationManager()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        
         server = HTTPManager()
-        let (upperLeft, lowerRight) = getMapBounds()
-        // THIS WILL RETURN PARKING SPOTS SET RETURN TO INSTANCE VARIABLE
-         server.getParkingSpots(upperLeft, lowerRight)
         
-        // set paramaeters of initial map to be displayed
-        mapView.delegate = self // make ViewController responsive to changes in mapView
+        // set parameters of map
+        mapView.delegate = self
         let regionDiameter: CLLocationDistance = 1000
         func centerMapOnLocation(location: CLLocationCoordinate2D) {
             let coordinateRegion = MKCoordinateRegionMakeWithDistance(location, regionDiameter, regionDiameter)
             mapView.setRegion(coordinateRegion, animated: true)
         }
-        
-        
+        // centers map on default location
         let cupertino = CLLocationCoordinate2D(latitude: 37.33182, longitude: -122.03118)
         centerMapOnLocation(cupertino)
         
-        mapView.addAnnotation(Pin(coordinate: cupertino))
-        
+        // set parameters of location manager
         locationManager.delegate = self
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
         locationManager.requestWhenInUseAuthorization()
         locationManager.startUpdatingLocation()
+        
+        updateMap()
     }
     
     override func didReceiveMemoryWarning() {
@@ -71,52 +44,39 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
     func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         let latestLocation: CLLocation = locations[locations.count - 1]
 
-        // Calculates speed (m/s) from distance traveled each second
-        var speed: Double = prevSpeed
+        // calculates speed (m/s) from distance traveled each second
+        var speed: Double = 5
         if prevLocation != nil {
             speed = latestLocation.distanceFromLocation(prevLocation!)
         }
         prevLocation = latestLocation
         
-        /*
-         Simplified Parking
-        */
-        
         // Park
         if isDriving && speed < 5 {
             isDriving = false
-            // THIS SHOULD BE IMPLEMENTED
-            // server.postParkingSpot(latestLocation.coordinate, false)
+            server.postParkingSpot(latestLocation.coordinate, false)
         }
         // Vacate
         else if !isDriving && speed >= 5 {
             isDriving = true
-            // THIS SHOULD BE IMPLEMENTED
-            // server.postParkingSpot(latestLocation.coordinate, true)
+            server.postParkingSpot(latestLocation.coordinate, true)
         }
         updateMap()
     }
     
     func locationManager(manager: CLLocationManager, didFailWithError error: NSError) {
-        
     }
     
     func updateMap() {
+        // removes old parking spots
         mapView.removeAnnotations(mapView.annotations.filter() {$0 !== mapView.userLocation})
-        let cupertino = CLLocationCoordinate2D(latitude: 37.33182, longitude: -122.03118)
-        mapView.addAnnotation(ParkingSpot(cupertino))
+        // adds new parking spots
+        let (upperLeft, lowerRight) = getMapBounds()
+        mapView.addAnnotations(server.getParkingSpots(upperLeft, lowerRight))
         
-        //mapView.addAnnotation(mapView.userLocation)
-        // THIS WILL ADD PARKING SPOTS TO MAP
-        // mapView.addAnnotation(PARKING SPOTS)
-        
-        // FOR DEBUGGING
-//        var spots = ParkingSpots()
-//        let spot1 = CLLocationCoordinate2D(latitude: 37.33181, longitude: -122.03119)
-//        spots.addSpot(cupertino)
-//        mapView.addAnnotations(Array(spots.getSpots(upperLeft, lowerRight)))
-        print(ParkingSpot(cupertino))
-        mapView.addAnnotation(ParkingSpot(cupertino))
+//        // Test
+//        let cupertino = CLLocationCoordinate2D(latitude: 37.33182, longitude: -122.03118)
+//        mapView.addAnnotation(ParkingSpot(cupertino))
     }
     
     func getMapBounds() -> (CLLocationCoordinate2D, CLLocationCoordinate2D) {
