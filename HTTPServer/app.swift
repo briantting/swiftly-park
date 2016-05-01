@@ -24,6 +24,7 @@ let port = 3000
 // ---- [ imports ] -----------------------------------------------------------
 
 import Darwin
+import Foundation
 import MapKit
 
 // ---- [ includes ] ----------------------------------------------------------
@@ -75,18 +76,40 @@ extension String {
 
 // ---- [ ParkingSpot ] --------------------------------------------------------
 
-class ParkingSpot: MKPointAnnotation, Comparable {
-    let lat: Double
-    let long: Double
-    var value: Double? = nil
+class ParkingSpot: MKPointAnnotation {
+    //    var pinColor: UIColor
+    var lat: Double
+    var long: Double
+    var x: Double
+    var y: Double
+    
     static let epsilon: Double = 5
     
     init(_ coordinate: CLLocationCoordinate2D) {
-        self.long = coordinate.latitude
-        self.lat = coordinate.longitude
+        long = coordinate.latitude
+        lat = coordinate.longitude
+        let mapPoint = MKMapPointForCoordinate(coordinate)
+        x = mapPoint.x
+        y = mapPoint.y
         super.init()
         self.coordinate = coordinate
     }
+    
+    init(m mapPoint: MKMapPoint) {
+        x = mapPoint.x
+        y = mapPoint.y
+        let coordinate = MKCoordinateForMapPoint(mapPoint)
+        lat = coordinate.latitude
+        long = coordinate.longitude
+        super.init()
+        self.coordinate = coordinate
+    }
+    
+    override var description: String {
+        let description = "\(self.lat), \(self.long))"
+        return description
+    }
+    
     override func isEqual(object : AnyObject?) -> Bool {
         if let object = object as? ParkingSpot {
             return (abs(self.lat - object.lat) < ParkingSpot.epsilon && abs(self.long - object.long) < ParkingSpot.epsilon)
@@ -96,48 +119,61 @@ class ParkingSpot: MKPointAnnotation, Comparable {
     }
 }
 
-class longSpot: ParkingSpot {
-    override init(_ coordinate: CLLocationCoordinate2D) {
-        super.init(coordinate)
-        self.value = coordinate.longitude
+func approxLessThan(left: Double, _ right: Double, _ epsilon: Double) -> Bool {
+    return right - left > epsilon
+}
+
+func approxEqual(left: Double, _ right: Double, _ epsilon: Double) -> Bool {
+    return abs(left - right) < epsilon
+}
+
+func <(left: XSpot, right: XSpot) -> Bool {
+    return approxLessThan(left.x, right.x, ParkingSpot.epsilon)
+}
+
+func ==(left: XSpot, right: XSpot) -> Bool {
+    return approxEqual(left.x, right.x, ParkingSpot.epsilon)
+}
+
+func <(left: YSpot, right: YSpot) -> Bool {
+    return approxLessThan(left.y, right.y, ParkingSpot.epsilon)
+}
+
+func ==(left: YSpot, right: YSpot) -> Bool {
+    return approxEqual(left.y, right.y, ParkingSpot.epsilon)
+}
+
+class XSpot: ParkingSpot, Comparable { }
+
+class YSpot: ParkingSpot, Comparable {
+    func asXSpot() -> XSpot {
+        return XSpot(self.coordinate)
     }
 }
 
-class latSpot: ParkingSpot {
-    override init(_ coordinate: CLLocationCoordinate2D) {
-        super.init(coordinate)
-        self.value = coordinate.latitude
+struct ParkingSpots {
+    var spotsByX = Node<XSpot>.Leaf
+    var spotsByY = Node<YSpot>.Leaf
+    
+    mutating func addSpot(coordinate: CLLocationCoordinate2D) {
+        spotsByX = spotsByX.insert(XSpot(coordinate))
+        spotsByY = spotsByY.insert(YSpot(coordinate))
     }
     
-    func asLongSpot() -> longSpot {
-        return longSpot(self.coordinate)
+    mutating func addSpot(mapPoint: MKMapPoint) {
+        spotsByX = spotsByX.insert(XSpot(m: mapPoint))
+        spotsByY = spotsByY.insert(YSpot(m: mapPoint))
     }
-}
-
-func <(left: ParkingSpot, right: ParkingSpot) -> Bool {
-    return right.value! - left.value! > ParkingSpot.epsilon
-}
-
-func ==(left: ParkingSpot, right: ParkingSpot) -> Bool {
-    return abs(left.value! - right.value!) < ParkingSpot.epsilon
-}
-
-func getSpots(spotsByLat: Node<longSpot>,
-              spotsByLong: Node<latSpot>,
-              upperLeft: CLLocationCoordinate2D,
-              lowerRight: CLLocationCoordinate2D) -> Set<ParkingSpot> {
     
-    let spotsInXRange = spotsByLat.valuesBetween(longSpot(upperLeft),
-                                                 and: longSpot(lowerRight))
-    
-    var count = 0
-    for tree in spotsInXRange {
-        print("\(count). \(tree.description)")
-        count += 1
+    func getSpots(upperLeft: CLLocationCoordinate2D,
+                  _ lowerRight: CLLocationCoordinate2D) -> Set<ParkingSpot> {
+        
+        let spotsInXRange = spotsByX.valuesBetween(XSpot(upperLeft),
+                                                   and: XSpot(lowerRight))
+        return spotsByY.valuesBetween(YSpot(upperLeft),
+                                      and: YSpot(lowerRight),
+                                      if: {spotsInXRange.contains($0.asXSpot())})
     }
-    return spotsByLong.valuesBetween(latSpot(upperLeft),
-                                     and: latSpot(lowerRight),
-                                     if: {spotsInXRange.contains($0.asLongSpot())})
 }
 
 
@@ -613,22 +649,23 @@ class Server {
 
 
 // ---- [ Process Get Command ] ------------------------------------------------------
-func processGetCommand(msg : String, _ latTree : Node<latSpot>, _ longTree : Node<longSpot>) -> String {
+func processGetCommand(msg : String, _ parkingSpots : ParkingSpots) -> String {
+    print("GET Command: Here is what is in the binary trees")
+    print(parkingSpots.spotsByX)
+    print(parkingSpots.spotsByY)
     let coordinates = convertStringToSpots(msg)
     guard coordinates.count == 2 else {
         return String("Invalid Get Request")
     }
     let northWest = coordinates[0]
     let southEast = coordinates[1]
-    print(latTree.description)
-    print(longTree.description)
-    let spotsWithinMap = getSpots(longTree, spotsByLong: latTree, upperLeft: northWest, lowerRight: southEast)
+    let spotsWithinMap = parkingSpots.getSpots(northWest, southEast)
     print(spotsWithinMap.count)
     return convertSpotsToString(spotsWithinMap)
 }
 
 // ---- [ Process Post Command ] ------------------------------------------------------
-func processPostCommand(msg : String, _ latTree : Node<latSpot>, _ longTree : Node<longSpot>) -> Void {
+func processPostCommand(msg : String, inout _ parkingSpots : ParkingSpots) -> Void {
     let commandIndex = msg.indexOf(",")
     let command = msg[0..<commandIndex]
     let stringCoordinates = msg[commandIndex+1..<msg.characters.count]
@@ -636,8 +673,7 @@ func processPostCommand(msg : String, _ latTree : Node<latSpot>, _ longTree : No
     
     if command == "ADD" {
         for coordinate in coordinates {
-            latTree.insert(latSpot(coordinate))
-            longTree.insert(longSpot(coordinate))
+            parkingSpots.addSpot(coordinate)
         }
     }
         
@@ -645,6 +681,10 @@ func processPostCommand(msg : String, _ latTree : Node<latSpot>, _ longTree : No
     else {
         print("Invalid POST command")
     }
+    
+    print("The tree after POST command: ")
+    print(parkingSpots.spotsByX)
+    print(parkingSpots.spotsByY)
     
     
 }
@@ -685,34 +725,26 @@ func convertStringToSpots(msg : String) -> [CLLocationCoordinate2D] {
 
 // ---- [ Populate trees with default parking spots ] ------------------------------------------------------
 
-func setupDefaultParkingSpots(spotsByLat : Node<latSpot>, _ spotsByLong : Node<longSpot>) -> (Node<latSpot>, Node<longSpot>) {
+func setupDefaultParkingSpots(inout parkingSpots : ParkingSpots) -> Void {
     let appleCampus = CLLocationCoordinate2D(latitude: 37.33182, longitude: -122.03118)
     let ducati = CLLocationCoordinate2D(latitude: 37.3276574, longitude: -122.0350399)
     let bagelStreetCafe = CLLocationCoordinate2D(latitude: 37.3315193, longitude: -122.0327043)
     
     let locations = [appleCampus, ducati, bagelStreetCafe]
     
-    var latSpotRoot = spotsByLat
-    var longSpotRoot = spotsByLong
-    
     for location in locations {
-        latSpotRoot = latSpotRoot.insert(latSpot(location))
-        longSpotRoot = longSpotRoot.insert(longSpot(location))
+        parkingSpots.addSpot(location)
     }
-    
-    return (latSpotRoot, longSpotRoot)
+    return
 }
 
 // ---- [ server setup ] ------------------------------------------------------
 
 let app = Server(port: port)
-var spotsByLat = Node<latSpot>.Leaf
-var spotsByLong = Node<longSpot>.Leaf
+var parkingSpots = ParkingSpots()
 
 print("Running server on port \(port)")
-let treeTuple = setupDefaultParkingSpots(spotsByLat, spotsByLong)
-spotsByLat = treeTuple.0
-spotsByLong = treeTuple.1
+setupDefaultParkingSpots(&parkingSpots)
 
 app.run() {
     request, response -> () in
@@ -732,9 +764,9 @@ app.run() {
         responseMsg = "Invalid request"
     }
     else if request.isGetCommand {
-        responseMsg = processGetCommand(request.commandMsg, spotsByLat, spotsByLong)
+        responseMsg = processGetCommand(request.commandMsg, parkingSpots)
     } else {
-        processPostCommand(request.commandMsg, spotsByLat, spotsByLong)
+        processPostCommand(request.commandMsg, &parkingSpots)
         responseMsg = "Post successful"
     }
     print(responseMsg)

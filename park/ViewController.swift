@@ -10,6 +10,14 @@ import UIKit
 import CoreLocation
 import MapKit
 
+class Pin: NSObject, MKAnnotation {
+    let coordinate: CLLocationCoordinate2D
+    
+    init(coordinate: CLLocationCoordinate2D) {
+        self.coordinate = coordinate
+    }
+}
+
 class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDelegate {
 
     @IBOutlet weak var mapView: MKMapView!
@@ -32,10 +40,6 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        
-        // THIS WILL RETURN PARKING SPOTS SET RETURN TO INSTANCE VARIABLE
-        // server.getParkingSpots(upperLeft, lowerRight)
-        
         // set paramaeters of initial map to be displayed
         mapView.delegate = self // make ViewController responsive to changes in mapView
         let regionDiameter: CLLocationDistance = 1000
@@ -44,20 +48,14 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
             mapView.setRegion(coordinateRegion, animated: true)
         }
         
-        
+       
+        let cupertino = CLLocationCoordinate2D(latitude: 37.33182, longitude: -122.03118)
         centerMapOnLocation(cupertino)
-        
         let (upperLeft, lowerRight) = getMapBounds()
         server = HTTPManager()
         parkingSpots = server.getParkingSpots(upperLeft, lowerRight)
-        print(parkingSpots)
         
-        mapView.addAnnotations([
-            ParkingSpot(cupertino),
-            ParkingSpot(upperLeft),
-            ParkingSpot(lowerRight)])
-        mapView.addAnnotations(parkingSpots)
-        updateMap()
+        mapView.addAnnotation(Pin(coordinate: cupertino))
         
         locationManager.delegate = self
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
@@ -110,14 +108,24 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
     
     func updateMap() {
         mapView.removeAnnotations(mapView.annotations.filter() {$0 !== mapView.userLocation})
-        // THIS WILL ADD PARKING SPOTS TO MAP
+        let cupertino = CLLocationCoordinate2D(latitude: 37.33182, longitude: -122.03118)
         mapView.addAnnotation(ParkingSpot(cupertino))
         if parkingSpots != nil {
-            mapView.addAnnotations(parkingSpots)
-            print(parkingSpots)
+            mapView.addAnnotations(parkingSpots!)
         }
         
         
+        //mapView.addAnnotation(mapView.userLocation)
+        // THIS WILL ADD PARKING SPOTS TO MAP
+        // mapView.addAnnotation(PARKING SPOTS)
+        
+        // FOR DEBUGGING
+//        var spots = ParkingSpots()
+//        let spot1 = CLLocationCoordinate2D(latitude: 37.33181, longitude: -122.03119)
+//        spots.addSpot(cupertino)
+//        mapView.addAnnotations(Array(spots.getSpots(upperLeft, lowerRight)))
+        print(ParkingSpot(cupertino))
+        mapView.addAnnotation(ParkingSpot(cupertino))
     }
     
     func getMapBounds() -> (CLLocationCoordinate2D, CLLocationCoordinate2D) {
@@ -126,15 +134,12 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
         let span = region.span
         let half_height = span.latitudeDelta/2
         let half_width = span.longitudeDelta/2
-        let upperLeft = CLLocationCoordinate2D(latitude: center.latitude + half_height,
-                                               longitude: center.longitude - half_width)
-        let lowerRight = CLLocationCoordinate2D(latitude: center.latitude - half_height,
-                                                longitude: center.longitude + half_width)
+        let upperLeft = CLLocationCoordinate2D(latitude: center.latitude + half_height, longitude: center.longitude - half_width)
+        let lowerRight = CLLocationCoordinate2D(latitude: center.latitude - half_height, longitude: center.longitude + half_width)
         return (upperLeft, lowerRight)
     }
     
     func mapView(mapView: MKMapView, regionDidChangeAnimated animated: Bool) {
-        print("TEST TEST")
         updateMap()
     }
     

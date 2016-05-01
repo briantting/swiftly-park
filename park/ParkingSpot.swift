@@ -9,62 +9,91 @@
 import Foundation
 import MapKit
 
-class ParkingSpot: MKPointAnnotation, Comparable {
-    var pinColor: UIColor
-    let lat: Double
-    let long: Double
-    var value: Double? = nil
+class ParkingSpot: MKPointAnnotation {
+//    var pinColor: UIColor
+    var lat: Double
+    var long: Double
+    var x: Double
+    var y: Double
+    
     static let epsilon: Double = 5
     
     init(_ coordinate: CLLocationCoordinate2D) {
-        self.long = coordinate.latitude
-        self.lat = coordinate.longitude
-        self.pinColor = UIColor.brownColor()
+        long = coordinate.latitude
+        lat = coordinate.longitude
+        let mapPoint = MKMapPointForCoordinate(coordinate)
+        x = mapPoint.x
+        y = mapPoint.y
+//        self.init(coordinate)
+        super.init()
+        self.coordinate = coordinate
+    }
+    
+    init(m mapPoint: MKMapPoint) {
+        x = mapPoint.x
+        y = mapPoint.y
+        let coordinate = MKCoordinateForMapPoint(mapPoint)
+        lat = coordinate.latitude
+        long = coordinate.longitude
+//        self.init(coordinate)
         super.init()
         self.coordinate = coordinate
     }
 }
 
-class longSpot: ParkingSpot {
-    override init(_ coordinate: CLLocationCoordinate2D) {
-        super.init(coordinate)
-        self.value = coordinate.longitude
+func approxLessThan(left: Double, _ right: Double, _ epsilon: Double) -> Bool {
+    return right - left > epsilon
+}
+
+func approxEqual(left: Double, _ right: Double, _ epsilon: Double) -> Bool {
+    return abs(left - right) < epsilon
+}
+
+func <(left: XSpot, right: XSpot) -> Bool {
+    return approxLessThan(left.x, right.x, ParkingSpot.epsilon)
+}
+
+func ==(left: XSpot, right: XSpot) -> Bool {
+    return approxEqual(left.x, right.x, ParkingSpot.epsilon)
+}
+
+func <(left: YSpot, right: YSpot) -> Bool {
+    return approxLessThan(left.y, right.y, ParkingSpot.epsilon)
+}
+
+func ==(left: YSpot, right: YSpot) -> Bool {
+    return approxEqual(left.y, right.y, ParkingSpot.epsilon)
+}
+
+class XSpot: ParkingSpot, Comparable { }
+
+class YSpot: ParkingSpot, Comparable {
+    func asXSpot() -> XSpot {
+        return XSpot(self.coordinate)
     }
 }
 
-class latSpot: ParkingSpot {
-    override init(_ coordinate: CLLocationCoordinate2D) {
-        super.init(coordinate)
-        self.value = coordinate.latitude
+struct ParkingSpots {
+    var spotsByX = Node<XSpot>.Leaf
+    var spotsByY = Node<YSpot>.Leaf
+    
+    mutating func addSpot(coordinate: CLLocationCoordinate2D) {
+        spotsByX = spotsByX.insert(XSpot(coordinate))
+        spotsByY = spotsByY.insert(YSpot(coordinate))
     }
     
-    func asLongSpot() -> longSpot {
-        return longSpot(self.coordinate)
+    mutating func addSpot(mapPoint: MKMapPoint) {
+        spotsByX = spotsByX.insert(XSpot(m: mapPoint))
+        spotsByY = spotsByY.insert(YSpot(m: mapPoint))
     }
-}
-
-
-func <(left: ParkingSpot, right: ParkingSpot) -> Bool {
-    return right.value! - left.value! > ParkingSpot.epsilon
-}
-
-func ==(left: ParkingSpot, right: ParkingSpot) -> Bool {
-    return abs(left.value! - right.value!) < ParkingSpot.epsilon
-}
-
-let spotsByLat = Node<latSpot>.Leaf
-let spotsByLong = Node<longSpot>.Leaf
-
-func getSpots(spotsByLat: Node<longSpot>,
-              spotsByLong: Node<latSpot>,
-              upperLeft: CLLocationCoordinate2D,
-              lowerRight: CLLocationCoordinate2D) -> Set<ParkingSpot> {
     
-    let upperLeftSpot = ParkingSpot(upperLeft)
-    let lowerRightSpot = ParkingSpot(lowerRight)
-    let spotsInXRange = spotsByLat.valuesBetween(upperLeftSpot as! longSpot,
-                                             and: lowerRightSpot as! longSpot)
-    return spotsByLong.valuesBetween(upperLeftSpot as! latSpot,
-                                and: lowerRightSpot as! latSpot,
-                                if: {spotsInXRange.contains($0.asLongSpot())})
+    func getSpots(upperLeft: CLLocationCoordinate2D,
+                  _ lowerRight: CLLocationCoordinate2D) -> Set<ParkingSpot> {
+        
+        let spotsInXRange = spotsByX.valuesBetween(XSpot(upperLeft),
+                           and: XSpot(lowerRight))
+        return spotsByY.valuesBetween(YSpot(upperLeft),
+                           and: YSpot(lowerRight),
+                           if: {spotsInXRange.contains($0.asXSpot())})
+    }
 }
