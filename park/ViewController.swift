@@ -107,9 +107,30 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
         // FOR DEBUGGING
 //        let (upperLeft, lowerRight) = getMapBounds()
 //        var spots = ParkingSpots()
-        let spot = CLLocationCoordinate2D(latitude: 37.33170, longitude: -122.03119)
+//        let spots = [
+//            CLLocationCoordinate2D(latitude: 37.33379, longitude: -122.03119),
+//            CLLocationCoordinate2D(latitude: 37.33171, longitude: -122.03118),
+//            CLLocationCoordinate2D(latitude: 37.33131, longitude: -122.03118),
+//            CLLocationCoordinate2D(latitude: 37.33141, longitude: -122.03128),
+//        ]
+//        let (upperLeft, lowerRight) = getMapBounds()
+//        var parkingSpots = ParkingSpots()
+//        for spot in spots {
+//            parkingSpots.addSpot(spot)
+//        }
+//        
+//        print("\ntest")
+//        let ySpots = parkingSpots.spotsByY.valuesBetween(YSpot(upperLeft), and: YSpot(lowerRight))
+//        let xSpots = parkingSpots.spotsByX.valuesBetween(XSpot(upperLeft), and: XSpot(lowerRight))
+//        print(ySpots)
+//        print(xSpots)
+//        
+//        for spot in parkingSpots.getSpots(upperLeft, lowerRight) {
+//            print(spot.lat, spot.long)
+//        }
+        
 //        spots.addSpot(cupertino)
-        mapView.addAnnotation(ParkingSpot(spot))
+//        mapView.addAnnotations(spots.map({XSpot($0)}))
         
         //mapView.addAnnotation(mapView.userLocation)
     }
