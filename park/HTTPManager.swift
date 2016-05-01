@@ -67,7 +67,7 @@ class HTTPManager {
         return spots
     }
     
-    func postParkingSpot(coordinate : CLLocationCoordinate2D, addSpot : Bool) -> Void {
+    func postParkingSpot(coordinate : CLLocationCoordinate2D, _ addSpot : Bool) -> Void {
         if task != nil {
             task?.cancel()
         }

@@ -75,7 +75,6 @@ extension String {
 }
 
 // ---- [ ParkingSpot ] --------------------------------------------------------
-
 class ParkingSpot: MKPointAnnotation {
     //    var pinColor: UIColor
     var lat: Double
@@ -91,6 +90,7 @@ class ParkingSpot: MKPointAnnotation {
         let mapPoint = MKMapPointForCoordinate(coordinate)
         x = mapPoint.x
         y = mapPoint.y
+        //        self.init(coordinate)
         super.init()
         self.coordinate = coordinate
     }
@@ -101,6 +101,7 @@ class ParkingSpot: MKPointAnnotation {
         let coordinate = MKCoordinateForMapPoint(mapPoint)
         lat = coordinate.latitude
         long = coordinate.longitude
+        //        self.init(coordinate)
         super.init()
         self.coordinate = coordinate
     }
@@ -108,14 +109,6 @@ class ParkingSpot: MKPointAnnotation {
     override var description: String {
         let description = "\(self.lat), \(self.long))"
         return description
-    }
-    
-    override func isEqual(object : AnyObject?) -> Bool {
-        if let object = object as? ParkingSpot {
-            return (abs(self.lat - object.lat) < ParkingSpot.epsilon && abs(self.long - object.long) < ParkingSpot.epsilon)
-        } else {
-            return false
-        }
     }
 }
 
@@ -170,9 +163,6 @@ struct ParkingSpots {
         
         let spotsInXRange = spotsByX.valuesBetween(XSpot(upperLeft),
                                                    and: XSpot(lowerRight))
-        for spots in spotsInXRange {
-            print(spots)
-        }
         return spotsByY.valuesBetween(YSpot(upperLeft),
                                       and: YSpot(lowerRight),
                                       if: {spotsInXRange.contains($0.asXSpot())})
@@ -183,6 +173,7 @@ struct ParkingSpots {
         spotsByY = spotsByY.remove(YSpot(coordinate))
     }
 }
+
 
 
 // ---- [ AVL Binary Tree ] --------------------------------------------------------
