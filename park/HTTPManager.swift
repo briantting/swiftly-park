@@ -22,7 +22,7 @@ class HTTPManager {
         if task != nil {
             task?.cancel()
         }
-        let request = "37.336325160217136,-122.03684589313772,37.327314839782836,-122.02551410686232"
+        let request = convertCoordinateToString(upperLeft, lowerRight)
         let url = NSURL(string: "http://127.0.0.1:3000/\(request)")
         
         // 5
@@ -98,6 +98,20 @@ class HTTPManager {
         stringCoordinate += ","
         stringCoordinate += String(coordinate.longitude)
         
+        return stringCoordinate
+        
+    }
+    
+    func convertCoordinateToString(coordinate1 : CLLocationCoordinate2D, _ coordinate2 : CLLocationCoordinate2D) -> String {
+        var stringCoordinate = String("")
+        stringCoordinate += String(coordinate1.latitude)
+        stringCoordinate += ","
+        stringCoordinate += String(coordinate1.longitude)
+        stringCoordinate += ","
+        stringCoordinate += String(coordinate2.latitude)
+        stringCoordinate += ","
+        stringCoordinate += String(coordinate2.longitude)
+        print(stringCoordinate)
         return stringCoordinate
         
     }

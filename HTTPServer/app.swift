@@ -170,6 +170,9 @@ struct ParkingSpots {
         
         let spotsInXRange = spotsByX.valuesBetween(XSpot(upperLeft),
                                                    and: XSpot(lowerRight))
+        for spots in spotsInXRange {
+            print(spots)
+        }
         return spotsByY.valuesBetween(YSpot(upperLeft),
                                       and: YSpot(lowerRight),
                                       if: {spotsInXRange.contains($0.asXSpot())})
