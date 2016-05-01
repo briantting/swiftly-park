@@ -11,11 +11,22 @@ import MapKit
 
 extension MKMapView {
     
-    public func setView(center: CLLocationCoordinate2D, diameter: CLLocationDistance) {
+    func setView(center: CLLocationCoordinate2D, diameter: CLLocationDistance) {
         let coordinateRegion = MKCoordinateRegionMakeWithDistance(
             center, diameter, diameter)
         self.setRegion(coordinateRegion, animated: true)
     }
     
+    // gets map bounds
+    func getMapBounds() -> (CLLocationCoordinate2D, CLLocationCoordinate2D) {
+        let region = self.region
+        let center = region.center
+        let span = region.span
+        let half_height = span.latitudeDelta/2
+        let half_width = span.longitudeDelta/2
+        let upperLeft = CLLocationCoordinate2D(latitude: center.latitude + half_height, longitude: center.longitude - half_width)
+        let lowerRight = CLLocationCoordinate2D(latitude: center.latitude - half_height, longitude: center.longitude + half_width)
+        return (upperLeft, lowerRight)
+    }
     
 }

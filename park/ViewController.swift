@@ -2,25 +2,6 @@ import UIKit
 import CoreLocation
 import MapKit
 
-extension MKMapView {
-    
-    func setView(center: CLLocationCoordinate2D, diameter: CLLocationDistance) {
-        let coordinateRegion = MKCoordinateRegionMakeWithDistance(
-            center, diameter, diameter)
-        self.setRegion(coordinateRegion, animated: true)
-    }
-    
-    func getMapBounds() -> (CLLocationCoordinate2D, CLLocationCoordinate2D) {
-        let region = self.region
-        let center = region.center
-        let span = region.span
-        let half_height = span.latitudeDelta/2
-        let half_width = span.longitudeDelta/2
-        let upperLeft = CLLocationCoordinate2D(latitude: center.latitude + half_height, longitude: center.longitude - half_width)
-        let lowerRight = CLLocationCoordinate2D(latitude: center.latitude - half_height, longitude: center.longitude + half_width)
-        return (upperLeft, lowerRight)
-    }
-}
 
 class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDelegate {
 
@@ -87,11 +68,10 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
     // updates annotations
     func updateMap() {
         // removes old parking spots
-        mapView.removeAnnotations(mapView.annotations.filter() {$0 !== mapView.userLocation})
+        mapView.removeAnnotations(mapView.annotations.filter()
+            {$0 !== mapView.userLocation})
         // adds new parking spots
         let (upperLeft, lowerRight) = mapView.getMapBounds()
         mapView.addAnnotations(server.getParkingSpots(upperLeft, lowerRight))
     }
-    
-    // gets map bounds
 }
