@@ -43,9 +43,18 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
             mapView.setRegion(coordinateRegion, animated: true)
         }
         
+        
+        
         let cupertino = CLLocationCoordinate2D(latitude: 37.33182, longitude: -122.03118)
         centerMapOnLocation(cupertino)
-        updateMap()
+//        updateMap()
+        
+        // FOR DEBUGGING
+        var spots = ParkingSpots()
+//        let spot1 = CLLocationCoordinate2D(latitude: 37.33181, longitude: -122.03119)
+        spots.addSpot(cupertino)
+//        mapView.addAnnotations(Array(spots.getSpots(upperLeft, lowerRight)))
+        mapView.addAnnotation(ParkingSpot(cupertino))
         
         locationManager.delegate = self
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
