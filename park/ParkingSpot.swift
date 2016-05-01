@@ -11,30 +11,33 @@ import MapKit
 
 class ParkingSpot: MKPointAnnotation {
 //    var pinColor: UIColor
-    let lat: Double
-    let long: Double
-    let x: Double
-    let y: Double
+    var lat: Double
+    var long: Double
+    var x: Double
+    var y: Double
     
     static let epsilon: Double = 5
     
     init(_ coordinate: CLLocationCoordinate2D) {
-        self.long = coordinate.latitude
-        self.lat = coordinate.longitude
+        long = coordinate.latitude
+        lat = coordinate.longitude
         let mapPoint = MKMapPointForCoordinate(coordinate)
-        self.x = mapPoint.x
-        self.y = mapPoint.y
+        x = mapPoint.x
+        y = mapPoint.y
+//        self.init(coordinate)
         super.init()
+        self.coordinate = coordinate
     }
     
-    init(mapPoint: MKMapPoint) {
-        self.x = mapPoint.x
-        self.y = mapPoint.y
+    init(m mapPoint: MKMapPoint) {
+        x = mapPoint.x
+        y = mapPoint.y
         let coordinate = MKCoordinateForMapPoint(mapPoint)
-        self.lat = coordinate.latitude
-        self.long = coordinate.longitude
+        lat = coordinate.latitude
+        long = coordinate.longitude
+//        self.init(coordinate)
         super.init()
-//        self.coordinate = coordinate // TODO: Not sure if commenting this breaks stuff
+        self.coordinate = coordinate
     }
 }
 
@@ -80,8 +83,8 @@ struct ParkingSpots {
     }
     
     mutating func addSpot(mapPoint: MKMapPoint) {
-        spotsByX = spotsByX.insert(XSpot(mapPoint: mapPoint))
-        spotsByY = spotsByY.insert(YSpot(mapPoint: mapPoint))
+        spotsByX = spotsByX.insert(XSpot(m: mapPoint))
+        spotsByY = spotsByY.insert(YSpot(m: mapPoint))
     }
     
     func getSpots(upperLeft: CLLocationCoordinate2D,

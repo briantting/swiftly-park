@@ -10,6 +10,14 @@ import UIKit
 import CoreLocation
 import MapKit
 
+class Pin: NSObject, MKAnnotation {
+    let coordinate: CLLocationCoordinate2D
+    
+    init(coordinate: CLLocationCoordinate2D) {
+        self.coordinate = coordinate
+    }
+}
+
 class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDelegate {
 
     @IBOutlet weak var mapView: MKMapView!
@@ -34,7 +42,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
         server = HTTPManager()
         let (upperLeft, lowerRight) = getMapBounds()
         // THIS WILL RETURN PARKING SPOTS SET RETURN TO INSTANCE VARIABLE
-        // server.getParkingSpots(upperLeft, lowerRight)
+         server.getParkingSpots(upperLeft, lowerRight)
         
         // set paramaeters of initial map to be displayed
         mapView.delegate = self // make ViewController responsive to changes in mapView
@@ -48,7 +56,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
         let cupertino = CLLocationCoordinate2D(latitude: 37.33182, longitude: -122.03118)
         centerMapOnLocation(cupertino)
         
-        print("TEST TEST")
+        mapView.addAnnotation(Pin(coordinate: cupertino))
         
         locationManager.delegate = self
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
@@ -101,7 +109,6 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
         //mapView.addAnnotation(mapView.userLocation)
         // THIS WILL ADD PARKING SPOTS TO MAP
         // mapView.addAnnotation(PARKING SPOTS)
-        let cupertino = CLLocationCoordinate2D(latitude: 37.33182, longitude: -122.03118)
         
         // FOR DEBUGGING
 //        var spots = ParkingSpots()
