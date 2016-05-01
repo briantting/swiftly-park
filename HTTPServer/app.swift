@@ -177,6 +177,11 @@ struct ParkingSpots {
                                       and: YSpot(lowerRight),
                                       if: {spotsInXRange.contains($0.asXSpot())})
     }
+    
+    mutating func removeSpot(coordinate: CLLocationCoordinate2D) -> Void {
+        spotsByX = spotsByX.remove(XSpot(coordinate))
+        spotsByY = spotsByY.remove(YSpot(coordinate))
+    }
 }
 
 
@@ -678,9 +683,11 @@ func processPostCommand(msg : String, inout _ parkingSpots : ParkingSpots) -> Vo
         for coordinate in coordinates {
             parkingSpots.addSpot(coordinate)
         }
+    } else if command == "REMOVE" {
+        for coordinate in coordinates {
+            parkingSpots.removeSpot(coordinate)
+        }
     }
-        
-        //TODO add a command for deleting from binary tree
     else {
         print("Invalid POST command")
     }
