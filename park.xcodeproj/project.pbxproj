@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		14FC4AEF1CD69965005EDB84 /* FitnessTrip.gpx in Resources */ = {isa = PBXBuildFile; fileRef = 14FC4AEE1CD69965005EDB84 /* FitnessTrip.gpx */; };
+		784D01D41CD3E1DA00613F71 /* HTTPManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784D01D31CD3E1DA00613F71 /* HTTPManager.swift */; };
+		784D01EA1CD3E32900613F71 /* HTTPManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784D01D31CD3E1DA00613F71 /* HTTPManager.swift */; };
+		784D02011CD3F1B900613F71 /* HTTPServer in Resources */ = {isa = PBXBuildFile; fileRef = 784D02001CD3F1B900613F71 /* HTTPServer */; };
 		AA480CD31CBC1231008294D0 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA480CD21CBC1231008294D0 /* AppDelegate.swift */; };
 		AA480CD51CBC1231008294D0 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA480CD41CBC1231008294D0 /* ViewController.swift */; };
 		AA480CD81CBC1231008294D0 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA480CD61CBC1231008294D0 /* Main.storyboard */; };
@@ -16,6 +20,7 @@
 		AA480CF31CBC1231008294D0 /* parkUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA480CF21CBC1231008294D0 /* parkUITests.swift */; };
 		AA480D011CBC1279008294D0 /* Tree.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA480D001CBC1279008294D0 /* Tree.swift */; };
 		AA78DB831CD137EA0038331E /* ParkingSpot.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0B463E1CCFF7C8001F9ECD /* ParkingSpot.swift */; };
+		AA9C9FF51CD68ED40043AA6C /* Util.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA9C9FF41CD68ED40043AA6C /* Util.swift */; };
 		AAE2BD241CCAF0A900CBA51E /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AAE2BD231CCAF0A900CBA51E /* MapKit.framework */; };
 /* End PBXBuildFile section */
 
@@ -37,6 +42,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		14FC4AEE1CD69965005EDB84 /* FitnessTrip.gpx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = FitnessTrip.gpx; sourceTree = "<group>"; };
+		784D01D31CD3E1DA00613F71 /* HTTPManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HTTPManager.swift; sourceTree = "<group>"; };
+		784D02001CD3F1B900613F71 /* HTTPServer */ = {isa = PBXFileReference; lastKnownFileType = folder; path = HTTPServer; sourceTree = "<group>"; };
 		AA0B463E1CCFF7C8001F9ECD /* ParkingSpot.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ParkingSpot.swift; sourceTree = "<group>"; };
 		AA480CCF1CBC1231008294D0 /* park.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = park.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		AA480CD21CBC1231008294D0 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -52,6 +60,7 @@
 		AA480CF21CBC1231008294D0 /* parkUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = parkUITests.swift; sourceTree = "<group>"; };
 		AA480CF41CBC1231008294D0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		AA480D001CBC1279008294D0 /* Tree.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Tree.swift; sourceTree = "<group>"; };
+		AA9C9FF41CD68ED40043AA6C /* Util.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Util.swift; sourceTree = "<group>"; };
 		AAE2BD231CCAF0A900CBA51E /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
@@ -81,9 +90,19 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		784D01FF1CD3F1A900613F71 /* HTTPServer */ = {
+			isa = PBXGroup;
+			children = (
+				784D02001CD3F1B900613F71 /* HTTPServer */,
+			);
+			name = HTTPServer;
+			sourceTree = "<group>";
+		};
 		AA480CC61CBC1230008294D0 = {
 			isa = PBXGroup;
 			children = (
+				14FC4AEE1CD69965005EDB84 /* FitnessTrip.gpx */,
+				784D01FF1CD3F1A900613F71 /* HTTPServer */,
 				AAE2BD231CCAF0A900CBA51E /* MapKit.framework */,
 				AA480CE61CBC1231008294D0 /* parkTests */,
 				AA480CF11CBC1231008294D0 /* parkUITests */,
@@ -112,6 +131,8 @@
 				AA480CDB1CBC1231008294D0 /* LaunchScreen.storyboard */,
 				AA480CDE1CBC1231008294D0 /* Info.plist */,
 				AA0B463E1CCFF7C8001F9ECD /* ParkingSpot.swift */,
+				AA9C9FF41CD68ED40043AA6C /* Util.swift */,
+				784D01D31CD3E1DA00613F71 /* HTTPManager.swift */,
 			);
 			name = park;
 			path = ../park;
@@ -248,6 +269,7 @@
 				AA480CDD1CBC1231008294D0 /* LaunchScreen.storyboard in Resources */,
 				AA480CDA1CBC1231008294D0 /* Assets.xcassets in Resources */,
 				AA480CD81CBC1231008294D0 /* Main.storyboard in Resources */,
+				14FC4AEF1CD69965005EDB84 /* FitnessTrip.gpx in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -255,6 +277,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				784D02011CD3F1B900613F71 /* HTTPServer in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -272,6 +295,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				784D01EA1CD3E32900613F71 /* HTTPManager.swift in Sources */,
 				AA480D011CBC1279008294D0 /* Tree.swift in Sources */,
 				AA480CD51CBC1231008294D0 /* ViewController.swift in Sources */,
 				AA78DB831CD137EA0038331E /* ParkingSpot.swift in Sources */,
@@ -284,6 +308,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				AA480CE81CBC1231008294D0 /* parkTests.swift in Sources */,
+				AA9C9FF51CD68ED40043AA6C /* Util.swift in Sources */,
+				784D01D41CD3E1DA00613F71 /* HTTPManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
