@@ -79,7 +79,10 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
         for spot in parkingSpots {
             print(spot)
         }
-        mapView.addAnnotations(parkingSpots)
+        //mapView.addAnnotations(parkingSpots)
+        
+        let cupertino = CLLocationCoordinate2D(latitude: 37.33182, longitude: -122.03118)
+        mapView.addAnnotation(ParkingSpot(cupertino))
     }
     
     // gets map bounds
