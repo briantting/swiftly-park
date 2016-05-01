@@ -35,7 +35,10 @@ class HTTPManager {
             } else if let httpResponse = response as? NSHTTPURLResponse {
                 if httpResponse.statusCode == 200 {
                     let content = NSString(data: data!, encoding: NSUTF8StringEncoding)
-                    print("There is no \(content!) mwahaha")
+                    print("The server's reply: \(content!)")
+                    if content?.length > 0 {
+                        self.spots = self.convertStringToParkingSpots(content!)
+                    }
                 }
             }
         }
@@ -43,6 +46,24 @@ class HTTPManager {
         task?.resume()
         
         return self.spots
+    }
+    
+    func convertStringToParkingSpots(serverString : NSString) -> [ParkingSpot] {
+        let coordinateList = serverString.componentsSeparatedByString(",")
+        var latitudes = [Double]()
+        var longitudes = [Double]()
+        print(coordinateList)
+        for (index, element) in coordinateList.enumerate() {
+            if index % 2 == 0 {
+                latitudes.append(Double(element)!)
+            } else {
+                longitudes.append(Double(element)!)
+            }
+        }
+        
+        let spots = latitudes.enumerate().map ({ParkingSpot(CLLocationCoordinate2D(latitude: latitudes[$0.index], longitude: longitudes[$0.index]))})
+        
+        return spots
     }
     
 }

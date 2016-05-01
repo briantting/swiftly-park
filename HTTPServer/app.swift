@@ -641,10 +641,14 @@ func processPostCommand(msg : String, _ latTree : Node<latSpot>, _ longTree : No
 func convertSpotsToString(spots : Set<ParkingSpot>) -> String {
     var stringSpots = ""
     for spot in spots {
+        
+        //Look into fixing order
+        stringSpots += String(spot.long)
+        stringSpots += ","
         stringSpots += String(spot.lat)
         stringSpots += ","
-        stringSpots += String(spot.long)
     }
+    stringSpots = stringSpots[0..<stringSpots.characters.count-1]
     return stringSpots
 }
 
@@ -721,6 +725,6 @@ app.run() {
         responseMsg = "Post successful"
     }
     print(responseMsg)
-    response.sendRaw("HTTP/1.1 200 OK\n\n\(responseMsg)\n")
+    response.sendRaw("HTTP/1.1 200 OK\n\n\(responseMsg)")
 }
 
