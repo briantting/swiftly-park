@@ -75,9 +75,11 @@ extension String {
 
 // ---- [ ParkingSpot ] --------------------------------------------------------
 
-class ParkingSpot: MKPointAnnotation {
+class ParkingSpot: MKPointAnnotation, Comparable {
     let lat: Double
     let long: Double
+    var value: Double? = nil
+    static let epsilon: Double = 5
     
     init(_ coordinate: CLLocationCoordinate2D) {
         self.long = coordinate.latitude
@@ -85,21 +87,39 @@ class ParkingSpot: MKPointAnnotation {
         super.init()
         self.coordinate = coordinate
     }
+    override func isEqual(object : AnyObject?) -> Bool {
+        if let object = object as? ParkingSpot {
+            return (abs(self.lat - object.lat) < ParkingSpot.epsilon && abs(self.long - object.long) < ParkingSpot.epsilon)
+        } else {
+            return false
+        }
+    }
 }
 
-class longSpot: ParkingSpot, Comparable {}
-class latSpot: ParkingSpot, Comparable {
+class longSpot: ParkingSpot {
+    override init(_ coordinate: CLLocationCoordinate2D) {
+        super.init(coordinate)
+        self.value = coordinate.longitude
+    }
+}
+
+class latSpot: ParkingSpot {
+    override init(_ coordinate: CLLocationCoordinate2D) {
+        super.init(coordinate)
+        self.value = coordinate.latitude
+    }
+    
     func asLongSpot() -> longSpot {
         return longSpot(self.coordinate)
     }
 }
 
-func < (left: longSpot, right: longSpot) -> Bool {
-    return left.lat < right.lat
+func <(left: ParkingSpot, right: ParkingSpot) -> Bool {
+    return right.value! - left.value! > ParkingSpot.epsilon
 }
 
-func < (left: latSpot, right: latSpot) -> Bool {
-    return left.long < right.long
+func ==(left: ParkingSpot, right: ParkingSpot) -> Bool {
+    return abs(left.value! - right.value!) < ParkingSpot.epsilon
 }
 
 func getSpots(spotsByLat: Node<longSpot>,
@@ -109,8 +129,11 @@ func getSpots(spotsByLat: Node<longSpot>,
     
     let spotsInXRange = spotsByLat.valuesBetween(longSpot(upperLeft),
                                                  and: longSpot(lowerRight))
+    
+    var count = 0
     for tree in spotsInXRange {
-        print(tree.description)
+        print("\(count). \(tree.description)")
+        count += 1
     }
     return spotsByLong.valuesBetween(latSpot(upperLeft),
                                      and: latSpot(lowerRight),
@@ -600,6 +623,7 @@ func processGetCommand(msg : String, _ latTree : Node<latSpot>, _ longTree : Nod
     print(latTree.description)
     print(longTree.description)
     let spotsWithinMap = getSpots(longTree, spotsByLong: latTree, upperLeft: northWest, lowerRight: southEast)
+    print(spotsWithinMap.count)
     return convertSpotsToString(spotsWithinMap)
 }
 
