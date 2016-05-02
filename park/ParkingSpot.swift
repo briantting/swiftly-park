@@ -78,7 +78,8 @@ struct ParkingSpots {
     func getSpots(upperLeft: CLLocationCoordinate2D,
                _ lowerRight: CLLocationCoordinate2D) -> Set<ParkingSpot> {
         
-        let spotsInXRange = spotsByX.valuesBetween(XSpot(upperLeft), and: XSpot(lowerRight))
+        let spotsInXRange = spotsByX
+            .valuesBetween(XSpot(upperLeft), and: XSpot(lowerRight))
             .map({$0 as ParkingSpot})
         print(upperLeft.latitude, upperLeft.longitude)
         print(lowerRight.latitude, lowerRight.longitude)
