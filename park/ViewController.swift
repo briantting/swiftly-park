@@ -2,7 +2,6 @@ import UIKit
 import CoreLocation
 import MapKit
 
-
 class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDelegate {
 
     @IBOutlet weak var mapView: MKMapView!
@@ -10,8 +9,9 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
 
     var isDriving: Bool = true // tracks if user is driving
     var prevLocation: CLLocation? = nil // tracks previous location for speed calculation
-    
+    var prevSpeed: Double = 5 // tracks previous speed
     var locationManager: CLLocationManager = CLLocationManager()
+    var spotsInView = Set<ParkingSpot>()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -28,9 +28,10 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
         locationManager.requestWhenInUseAuthorization()
         locationManager.startUpdatingLocation()
         
+        // updates map every 5 seconds
         NSTimer.scheduledTimerWithTimeInterval(5,
                                                target: self,
-                                               selector: #selector(ViewController.testPrint),
+                                               selector: #selector(ViewController.updateMap),
                                                userInfo: nil,
                                                repeats: true)
     }
@@ -39,32 +40,34 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
         super.didReceiveMemoryWarning()
     }
     
-    func testPrint() {
-        print("TEST TEST TEST")
-    }
-    
     // updates on new location
     func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         let latestLocation: CLLocation = locations[locations.count - 1]
 
         // calculates speed (m/s) from distance traveled each second
-        var speed: Double = 5
+        var speed: Double = prevSpeed
         if prevLocation != nil {
-            speed = latestLocation.distanceFromLocation(prevLocation!)
+            let tempSpeed: Double = latestLocation.distanceFromLocation(prevLocation!)
+            if tempSpeed != 0 {
+                speed = tempSpeed
+            }
         }
-        prevLocation = latestLocation
         
         // Park
         if isDriving && speed < 5 {
             isDriving = false
-//            server.postParkingSpot(latestLocation.coordinate, false)
+            server.postParkingSpot(prevLocation!.coordinate, false)
+            print("Parked")
         }
-        // Vacate
+        // Unpark
         else if !isDriving && speed >= 5 {
             isDriving = true
-//            server.postParkingSpot(latestLocation.coordinate, true)
+            server.postParkingSpot(prevLocation!.coordinate, true)
+            print("Unparked")
         }
-        updateMap()
+        
+        prevLocation = latestLocation
+        prevSpeed = speed
     }
     
     func locationManager(manager: CLLocationManager, didFailWithError error: NSError) {
@@ -77,11 +80,17 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
     
     // updates annotations
     func updateMap() {
-        // removes old parking spots
-        mapView.removeAnnotations(mapView.annotations.filter()
-            {$0 !== mapView.userLocation})
+        
         // adds new parking spots
         let (upperLeft, lowerRight) = mapView.getMapBounds()
-        mapView.addAnnotations(server.getParkingSpots(upperLeft, lowerRight))
+        let parkingSpots = server.getParkingSpots(upperLeft, lowerRight)
+        
+        // removes old parking spots
+        mapView.removeAnnotations(mapView.annotations.filter() {$0 !== mapView.userLocation})
+
+        mapView.showsUserLocation = true
+        for spot in parkingSpots {
+            mapView.addAnnotation(spot)
+        }
     }
 }

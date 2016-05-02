@@ -21,16 +21,16 @@
 // ---- [ extensions ] --------------------------------------------------------
 
 extension String {
-
+    
     subscript (i: Int) -> Character {
         return self[self.startIndex.advancedBy(i, limit: self.endIndex)]
     }
-
+    
     subscript (r: Range<Int>) -> String {
         return String(self.characters[Range(start: self.startIndex.advancedBy(r.startIndex, limit: self.endIndex),
             end: self.startIndex.advancedBy(r.endIndex, limit: self.endIndex))])
     }
-
+    
     func indexOf(searchString : String) -> Int {
         // TODO: find a better way to do this
         for i in 0..<(self.characters.count - searchString.characters.count) {

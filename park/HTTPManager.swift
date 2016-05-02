@@ -4,37 +4,37 @@
 //
 //  Created by Brendon Lavernia on 4/29/16.
 //  Copyright © 2016 Ethan Brooks. All rights reserved.
-//
 
 import Foundation
 import MapKit
 
 class HTTPManager {
-    let ipAddress = "http://127.0.0.1:3000/"
+    let ipAddress = "http://158.130.110.135:3000/"
     
     // Sets up the URL session
     let session = NSURLSession(configuration: NSURLSessionConfiguration.defaultSessionConfiguration())
     // Will do the requesting and fetching of data
-    var task: NSURLSessionDataTask?
+    var getTask : NSURLSessionDataTask?
+    var postTask : NSURLSessionDataTask?
     var spots = [ParkingSpot]()
     
     func getParkingSpots(upperLeft: CLLocationCoordinate2D, _ lowerRight: CLLocationCoordinate2D) -> [ParkingSpot] {
         // Checks if task is already running. Cancels to avoid multiple requests.
-        if task != nil {
-            task?.cancel()
+        if getTask != nil {
+            getTask?.cancel()
         }
         let request = convertCoordinateToString(upperLeft, lowerRight)
         let url = NSURL(string: "\(ipAddress)\(request)")
         
         // 5
-        task = session.dataTaskWithURL(url!) {
+        getTask = session.dataTaskWithURL(url!) {
             data, response, error in
             if let error = error {
                 print(error.localizedDescription)
             } else if let httpResponse = response as? NSHTTPURLResponse {
                 if httpResponse.statusCode == 200 {
                     let content = NSString(data: data!, encoding: NSUTF8StringEncoding)
-                    print("The server's reply: \(content!)")
+                    //print("The server's reply: \(content!)")
                     if content?.length > 0 {
                         self.spots = self.convertStringToParkingSpots(content!)
                     }
@@ -42,7 +42,7 @@ class HTTPManager {
             }
         }
         // Starts task
-        task?.resume()
+        getTask?.resume()
         //Need to wait for task to complete
         sleep(1)
         
@@ -53,7 +53,7 @@ class HTTPManager {
         let coordinateList = serverString.componentsSeparatedByString(",")
         var latitudes = [Double]()
         var longitudes = [Double]()
-        print(coordinateList)
+
         for (index, element) in coordinateList.enumerate() {
             if index % 2 == 0 {
                 latitudes.append(Double(element)!)
@@ -67,25 +67,23 @@ class HTTPManager {
         return spots
     }
     
-    func postParkingSpot(coordinate : CLLocationCoordinate2D, addSpot : Bool) -> Void {
-        if task != nil {
-            task?.cancel()
+    func postParkingSpot(coordinate : CLLocationCoordinate2D, _ addSpot : Bool) -> Void {
+        if postTask != nil {
+            postTask?.cancel()
         }
         let request = convertCoordinateToString(coordinate, addSpot)
-        let url = NSURL(string: "http://127.0.0.1:3000/\(request)")
+        let url = NSURL(string: "\(ipAddress)\(request)")
         let postURL = NSMutableURLRequest(URL: url!)
         postURL.HTTPMethod = "POST"
-        task = session.dataTaskWithRequest(postURL) {
+        postTask = session.dataTaskWithRequest(postURL) {
             data, response, error in
             guard data != nil && response != nil && error == nil else {
-                print(error.debugDescription)
+                //print(error.debugDescription)
                 return
             }
-            
         }
         
-        task?.resume()
-        
+        postTask?.resume()
     }
     
     func convertCoordinateToString(coordinate : CLLocationCoordinate2D, _ addSpot : Bool) -> String {
@@ -100,7 +98,6 @@ class HTTPManager {
         stringCoordinate += String(coordinate.longitude)
         
         return stringCoordinate
-        
     }
     
     func convertCoordinateToString(coordinate1 : CLLocationCoordinate2D, _ coordinate2 : CLLocationCoordinate2D) -> String {
@@ -112,10 +109,8 @@ class HTTPManager {
         stringCoordinate += String(coordinate2.latitude)
         stringCoordinate += ","
         stringCoordinate += String(coordinate2.longitude)
-        print(stringCoordinate)
-        return stringCoordinate
         
+        return stringCoordinate
     }
     
 }
-
