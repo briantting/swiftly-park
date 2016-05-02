@@ -4,13 +4,12 @@
 //
 //  Created by Brendon Lavernia on 4/29/16.
 //  Copyright © 2016 Ethan Brooks. All rights reserved.
-//
 
 import Foundation
 import MapKit
 
 class HTTPManager {
-    let ipAddress = "http://158.130.104.208:3000/"
+    let ipAddress = "http://158.130.110.135:3000/"
     
     // Sets up the URL session
     let session = NSURLSession(configuration: NSURLSessionConfiguration.defaultSessionConfiguration())
@@ -81,11 +80,9 @@ class HTTPManager {
                 //print(error.debugDescription)
                 return
             }
-            
         }
         
         task?.resume()
-        
     }
     
     func convertCoordinateToString(coordinate : CLLocationCoordinate2D, _ addSpot : Bool) -> String {
@@ -100,7 +97,6 @@ class HTTPManager {
         stringCoordinate += String(coordinate.longitude)
         
         return stringCoordinate
-        
     }
     
     func convertCoordinateToString(coordinate1 : CLLocationCoordinate2D, _ coordinate2 : CLLocationCoordinate2D) -> String {
@@ -112,9 +108,8 @@ class HTTPManager {
         stringCoordinate += String(coordinate2.latitude)
         stringCoordinate += ","
         stringCoordinate += String(coordinate2.longitude)
-        return stringCoordinate
         
+        return stringCoordinate
     }
     
 }
-
