@@ -31,6 +31,8 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
         locationManager.requestWhenInUseAuthorization()
         locationManager.startUpdatingLocation()
+        sleep(5)
+        server.postParkingSpot(CLLocationCoordinate2D(latitude:37.336299999, longitude: -122.0211111111), true)
     }
     
     override func didReceiveMemoryWarning() {

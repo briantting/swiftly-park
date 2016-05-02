@@ -72,7 +72,7 @@ class HTTPManager {
             task?.cancel()
         }
         let request = convertCoordinateToString(coordinate, addSpot)
-        let url = NSURL(string: "http://127.0.0.1:3000/\(request)")
+        let url = NSURL(string: "\(ipAddress)\(request)")
         let postURL = NSMutableURLRequest(URL: url!)
         postURL.HTTPMethod = "POST"
         task = session.dataTaskWithRequest(postURL) {
