@@ -155,7 +155,7 @@ struct ParkingSpots {
                                       if: {spotsInXRange.contains($0.asXSpot())})
     }
     
-    mutating func remove    Spot(coordinate: CLLocationCoordinate2D) -> Void {
+    mutating func removeSpot(coordinate: CLLocationCoordinate2D) -> Void {
         spotsByX = spotsByX.remove(XSpot(coordinate))
         spotsByY = spotsByY.remove(YSpot(coordinate))
     }
