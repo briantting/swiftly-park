@@ -60,7 +60,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
             print("Unparked")
         }
         // updates every 30 seconds
-        if NSDate.timeIntervalSinceReferenceDate() - time > 10 {
+        if NSDate.timeIntervalSinceReferenceDate() - time > 5 {
             updateMap()
             time = NSDate.timeIntervalSinceReferenceDate()
         }
