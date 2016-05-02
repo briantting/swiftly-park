@@ -46,26 +46,27 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
                 speed = tempSpeed
             }
         }
-        prevLocation = latestLocation
-        prevSpeed = speed
         
         // Park
         if isDriving && speed < 5 {
             isDriving = false
-            server.postParkingSpot(latestLocation.coordinate, false)
+            server.postParkingSpot(prevLocation!.coordinate, false)
             print("Parked")
         }
         // Unpark
         else if !isDriving && speed >= 5 {
             isDriving = true
-            server.postParkingSpot(latestLocation.coordinate, true)
+            server.postParkingSpot(prevLocation!.coordinate, true)
             print("Unparked")
         }
         // updates every 30 seconds
-        if NSDate.timeIntervalSinceReferenceDate() - time > 30000 {
+        if NSDate.timeIntervalSinceReferenceDate() - time > 10 {
             updateMap()
             time = NSDate.timeIntervalSinceReferenceDate()
         }
+        
+        prevLocation = latestLocation
+        prevSpeed = speed
     }
     
     func locationManager(manager: CLLocationManager, didFailWithError error: NSError) {
