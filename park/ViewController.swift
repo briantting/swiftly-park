@@ -2,7 +2,6 @@ import UIKit
 import CoreLocation
 import MapKit
 
-
 class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDelegate {
 
     @IBOutlet weak var mapView: MKMapView!
@@ -27,6 +26,8 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
         locationManager.requestWhenInUseAuthorization()
         locationManager.startUpdatingLocation()
+        sleep(5)
+        server.postParkingSpot(CLLocationCoordinate2D(latitude:37.336299999, longitude: -122.0211111111), true)
     }
     
     override func didReceiveMemoryWarning() {
@@ -47,12 +48,12 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
         // Park
         if isDriving && speed < 5 {
             isDriving = false
-//            server.postParkingSpot(latestLocation.coordinate, false)
+            server.postParkingSpot(latestLocation.coordinate, false)
         }
         // Vacate
         else if !isDriving && speed >= 5 {
             isDriving = true
-//            server.postParkingSpot(latestLocation.coordinate, true)
+            server.postParkingSpot(latestLocation.coordinate, true)
         }
         updateMap()
     }
@@ -71,7 +72,15 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
         mapView.removeAnnotations(mapView.annotations.filter()
             {$0 !== mapView.userLocation})
         // adds new parking spots
-        let (upperLeft, lowerRight) = mapView.getMapBounds()
-        mapView.addAnnotations(server.getParkingSpots(upperLeft, lowerRight))
+        let (upperLeft, lowerRight) = getMapBounds()
+        let parkingSpots = server.getParkingSpots(upperLeft, lowerRight)
+
+        //mapView.addAnnotations(parkingSpots)
+        
+        let cupertino = CLLocationCoordinate2D(latitude: 37.33182, longitude: -122.03118)
+        mapView.addAnnotation(ParkingSpot(cupertino))
+        for spot in parkingSpots {
+            mapView.addAnnotation(spot)
+        }
     }
 }

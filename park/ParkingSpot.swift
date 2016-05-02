@@ -55,6 +55,7 @@ class ParkingSpot: MKPointAnnotation {
         }
         return false
     }
+
 }
 
 class XSpot: ParkingSpot, Comparable { }
@@ -86,5 +87,10 @@ struct ParkingSpots {
         return spotsByY.valuesBetween(YSpot(upperLeft),
                            and: YSpot(lowerRight),
                            if: {spotsInXRange.contains($0.asXSpot())})
+    }
+    
+    mutating func removeSpot(coordinate: CLLocationCoordinate2D) -> Void {
+        spotsByX = spotsByX.remove(XSpot(coordinate))
+        spotsByY = spotsByY.remove(YSpot(coordinate))
     }
 }

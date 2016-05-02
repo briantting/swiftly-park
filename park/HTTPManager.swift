@@ -67,12 +67,12 @@ class HTTPManager {
         return spots
     }
     
-    func postParkingSpot(coordinate : CLLocationCoordinate2D, addSpot : Bool) -> Void {
+    func postParkingSpot(coordinate : CLLocationCoordinate2D, _ addSpot : Bool) -> Void {
         if task != nil {
             task?.cancel()
         }
         let request = convertCoordinateToString(coordinate, addSpot)
-        let url = NSURL(string: "http://127.0.0.1:3000/\(request)")
+        let url = NSURL(string: "\(ipAddress)\(request)")
         let postURL = NSMutableURLRequest(URL: url!)
         postURL.HTTPMethod = "POST"
         task = session.dataTaskWithRequest(postURL) {
