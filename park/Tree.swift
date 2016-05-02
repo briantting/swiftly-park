@@ -76,6 +76,9 @@ indirect enum Node<T where T:Comparable, T:Hashable> : CustomStringConvertible {
     func insert(value: T) -> Node<T> {
         switch self {
         case let Tree(_, root, _, _):
+            if value == root {
+                return self
+            }
             return self
                 .substitute({$0.insert(value)},
                             forLeftBranchIf: value < root)!
