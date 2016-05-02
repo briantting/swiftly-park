@@ -9,6 +9,14 @@
 import Foundation
 import MapKit
 
+func approxLessThan(left: Double, _ right: Double, _ epsilon: Double) -> Bool {
+    return right - left > epsilon
+}
+
+func almostEqual(left: Double, _ right: Double, _ epsilon: Double) -> Bool {
+    return abs(left - right) < epsilon
+}
+
 func <(left: XSpot, right: XSpot) -> Bool {
     return approxLessThan(left.x, right.x, ParkingSpot.epsilon)
 }
