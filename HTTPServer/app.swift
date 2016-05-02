@@ -155,7 +155,7 @@ struct ParkingSpots {
                                       if: {spotsInXRange.contains($0.asXSpot())})
     }
     
-    mutating func removeSpot(coordinate: CLLocationCoordinate2D) -> Void {
+    mutating func remove    Spot(coordinate: CLLocationCoordinate2D) -> Void {
         spotsByX = spotsByX.remove(XSpot(coordinate))
         spotsByY = spotsByY.remove(YSpot(coordinate))
     }
@@ -637,8 +637,8 @@ class Server {
 // ---- [ Process Get Command ] ------------------------------------------------------
 func processGetCommand(msg : String, _ parkingSpots : ParkingSpots) -> String {
     print("GET Command: Here is what is in the binary trees")
-    print(parkingSpots.spotsByX)
-    print(parkingSpots.spotsByY)
+    print("XTree: \(parkingSpots.spotsByX)")
+    print("YTree: \(parkingSpots.spotsByY)")
     let coordinates = convertStringToSpots(msg)
     guard coordinates.count == 2 else {
         return String("Invalid Get Request")
@@ -681,6 +681,11 @@ func processPostCommand(msg : String, inout _ parkingSpots : ParkingSpots) -> Vo
 
 func convertSpotsToString(spots : Set<ParkingSpot>) -> String {
     var stringSpots = ""
+    
+    guard spots.count > 0 else {
+        return stringSpots
+    }
+    
     for spot in spots {
         
         //Look into fixing order
