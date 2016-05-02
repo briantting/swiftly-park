@@ -28,10 +28,6 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
         locationManager.requestWhenInUseAuthorization()
         locationManager.startUpdatingLocation()
-//        sleep(45)
-//        server.postParkingSpot(cupertino, true)
-        sleep(145)
-        server.postParkingSpot(cupertino, false)
     }
     
     override func didReceiveMemoryWarning() {
