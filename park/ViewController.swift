@@ -28,18 +28,19 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
         locationManager.requestWhenInUseAuthorization()
         locationManager.startUpdatingLocation()
         
-        
-        print("NSTimer")
-        //        _ = NSTimer
-        //            .scheduledTimerWithTimeInterval(1,
-        //                                            target: self,
-        //                                            selector: #selector(ViewController.testPrint),
-        //                                            userInfo: nil,
-        //                                            repeats: true)
+        NSTimer.scheduledTimerWithTimeInterval(5,
+                                               target: self,
+                                               selector: #selector(ViewController.testPrint),
+                                               userInfo: nil,
+                                               repeats: true)
     }
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
+    }
+    
+    func testPrint() {
+        print("TEST TEST TEST")
     }
     
     // updates on new location
