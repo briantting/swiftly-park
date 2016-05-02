@@ -53,7 +53,6 @@ class HTTPManager {
         let coordinateList = serverString.componentsSeparatedByString(",")
         var latitudes = [Double]()
         var longitudes = [Double]()
-        print(coordinateList)
         for (index, element) in coordinateList.enumerate() {
             if index % 2 == 0 {
                 latitudes.append(Double(element)!)
@@ -112,7 +111,6 @@ class HTTPManager {
         stringCoordinate += String(coordinate2.latitude)
         stringCoordinate += ","
         stringCoordinate += String(coordinate2.longitude)
-        print(stringCoordinate)
         return stringCoordinate
         
     }
