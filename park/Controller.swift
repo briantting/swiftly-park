@@ -8,3 +8,11 @@
 
 import Foundation
 
+
+protocol MapViewController {
+    func getSpots() -> Set<ParkingSpot>
+}
+
+protocol LocationController {
+    func updateModelWith(location: CLLocationCoordinate2D)
+}
