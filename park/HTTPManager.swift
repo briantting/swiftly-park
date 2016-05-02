@@ -9,7 +9,7 @@ import Foundation
 import MapKit
 
 class HTTPManager {
-    let ipAddress = "http://158.130.104.208:3000/"
+    let ipAddress = "http://158.130.110.135:3000/"
     
     // Sets up the URL session
     let session = NSURLSession(configuration: NSURLSessionConfiguration.defaultSessionConfiguration())
