@@ -83,13 +83,10 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
     // updates annotations
     func updateMap() {
         // removes old parking spots
-
-        mapView.removeAnnotations(mapView.annotations.filter()
-            {$0 !== mapView.userLocation})
+        mapView.removeAnnotations(mapView.annotations.filter() {$0 !== mapView.userLocation})
         // adds new parking spots
         let (upperLeft, lowerRight) = mapView.getMapBounds()
         let parkingSpots = server.getParkingSpots(upperLeft, lowerRight)
-
 
         mapView.showsUserLocation = true
         for spot in parkingSpots {
