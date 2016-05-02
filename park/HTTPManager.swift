@@ -10,7 +10,7 @@ import Foundation
 import MapKit
 
 class HTTPManager {
-    let ipAddress = "http://127.0.0.1:3000/"
+    let ipAddress = "http://158.130.104.208:3000/"
     
     // Sets up the URL session
     let session = NSURLSession(configuration: NSURLSessionConfiguration.defaultSessionConfiguration())
@@ -30,11 +30,11 @@ class HTTPManager {
         task = session.dataTaskWithURL(url!) {
             data, response, error in
             if let error = error {
-                print(error.localizedDescription)
+                //print(error.localizedDescription)
             } else if let httpResponse = response as? NSHTTPURLResponse {
                 if httpResponse.statusCode == 200 {
                     let content = NSString(data: data!, encoding: NSUTF8StringEncoding)
-                    print("The server's reply: \(content!)")
+                    //print("The server's reply: \(content!)")
                     if content?.length > 0 {
                         self.spots = self.convertStringToParkingSpots(content!)
                     }
@@ -53,7 +53,7 @@ class HTTPManager {
         let coordinateList = serverString.componentsSeparatedByString(",")
         var latitudes = [Double]()
         var longitudes = [Double]()
-        print(coordinateList)
+        //print(coordinateList)
         for (index, element) in coordinateList.enumerate() {
             if index % 2 == 0 {
                 latitudes.append(Double(element)!)
@@ -72,13 +72,13 @@ class HTTPManager {
             task?.cancel()
         }
         let request = convertCoordinateToString(coordinate, addSpot)
-        let url = NSURL(string: "http://127.0.0.1:3000/\(request)")
+        let url = NSURL(string: "\(ipAddress)\(request)")
         let postURL = NSMutableURLRequest(URL: url!)
         postURL.HTTPMethod = "POST"
         task = session.dataTaskWithRequest(postURL) {
             data, response, error in
             guard data != nil && response != nil && error == nil else {
-                print(error.debugDescription)
+                //print(error.debugDescription)
                 return
             }
             
@@ -112,7 +112,7 @@ class HTTPManager {
         stringCoordinate += String(coordinate2.latitude)
         stringCoordinate += ","
         stringCoordinate += String(coordinate2.longitude)
-        print(stringCoordinate)
+        //print(stringCoordinate)
         return stringCoordinate
         
     }

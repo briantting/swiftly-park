@@ -9,6 +9,8 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
 
     var isDriving: Bool = true // tracks if user is driving
     var prevLocation: CLLocation? = nil // tracks previous location for speed calculation
+    var prevSpeed: Double = 5 // tracks previous speed
+    var time: Double = NSDate.timeIntervalSinceReferenceDate() // tracks time
     
     var locationManager: CLLocationManager = CLLocationManager()
     
@@ -42,23 +44,33 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
         let latestLocation: CLLocation = locations[locations.count - 1]
 
         // calculates speed (m/s) from distance traveled each second
-        var speed: Double = 5
+        var speed: Double = prevSpeed
         if prevLocation != nil {
-            speed = latestLocation.distanceFromLocation(prevLocation!)
+            let tempSpeed: Double = latestLocation.distanceFromLocation(prevLocation!)
+            if tempSpeed != 0 {
+                speed = tempSpeed
+            }
         }
         prevLocation = latestLocation
+        prevSpeed = speed
         
         // Park
         if isDriving && speed < 5 {
             isDriving = false
             server.postParkingSpot(latestLocation.coordinate, false)
+            print("Parked")
         }
-        // Vacate
+        // Unpark
         else if !isDriving && speed >= 5 {
             isDriving = true
             server.postParkingSpot(latestLocation.coordinate, true)
+            print("Unparked")
         }
-        updateMap()
+        // updates every 30 seconds
+        if NSDate.timeIntervalSinceReferenceDate() - time > 30000 {
+            updateMap()
+            time = NSDate.timeIntervalSinceReferenceDate()
+        }
     }
     
     func locationManager(manager: CLLocationManager, didFailWithError error: NSError) {
@@ -77,10 +89,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
         let (upperLeft, lowerRight) = getMapBounds()
         let parkingSpots = server.getParkingSpots(upperLeft, lowerRight)
 
-        //mapView.addAnnotations(parkingSpots)
-        
-        let cupertino = CLLocationCoordinate2D(latitude: 37.33182, longitude: -122.03118)
-        mapView.addAnnotation(ParkingSpot(cupertino))
+        mapView.showsUserLocation = true
         for spot in parkingSpots {
             mapView.addAnnotation(spot)
         }

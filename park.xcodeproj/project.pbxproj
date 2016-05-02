@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		14FC4AEF1CD69965005EDB84 /* FitnessTrip.gpx in Resources */ = {isa = PBXBuildFile; fileRef = 14FC4AEE1CD69965005EDB84 /* FitnessTrip.gpx */; };
+		141228051CD7A88200783A7D /* FitnessTrip.gpx in Resources */ = {isa = PBXBuildFile; fileRef = 141228041CD7A88200783A7D /* FitnessTrip.gpx */; };
 		784D01D41CD3E1DA00613F71 /* HTTPManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784D01D31CD3E1DA00613F71 /* HTTPManager.swift */; };
 		784D01EA1CD3E32900613F71 /* HTTPManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784D01D31CD3E1DA00613F71 /* HTTPManager.swift */; };
 		784D02011CD3F1B900613F71 /* HTTPServer in Resources */ = {isa = PBXBuildFile; fileRef = 784D02001CD3F1B900613F71 /* HTTPServer */; };
@@ -42,7 +42,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		14FC4AEE1CD69965005EDB84 /* FitnessTrip.gpx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = FitnessTrip.gpx; sourceTree = "<group>"; };
+		141228041CD7A88200783A7D /* FitnessTrip.gpx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = FitnessTrip.gpx; sourceTree = "<group>"; };
 		784D01D31CD3E1DA00613F71 /* HTTPManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HTTPManager.swift; sourceTree = "<group>"; };
 		784D02001CD3F1B900613F71 /* HTTPServer */ = {isa = PBXFileReference; lastKnownFileType = folder; path = HTTPServer; sourceTree = "<group>"; };
 		AA0B463E1CCFF7C8001F9ECD /* ParkingSpot.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ParkingSpot.swift; sourceTree = "<group>"; };
@@ -101,7 +101,7 @@
 		AA480CC61CBC1230008294D0 = {
 			isa = PBXGroup;
 			children = (
-				14FC4AEE1CD69965005EDB84 /* FitnessTrip.gpx */,
+				141228041CD7A88200783A7D /* FitnessTrip.gpx */,
 				784D01FF1CD3F1A900613F71 /* HTTPServer */,
 				AAE2BD231CCAF0A900CBA51E /* MapKit.framework */,
 				AA480CE61CBC1231008294D0 /* parkTests */,
@@ -269,7 +269,7 @@
 				AA480CDD1CBC1231008294D0 /* LaunchScreen.storyboard in Resources */,
 				AA480CDA1CBC1231008294D0 /* Assets.xcassets in Resources */,
 				AA480CD81CBC1231008294D0 /* Main.storyboard in Resources */,
-				14FC4AEF1CD69965005EDB84 /* FitnessTrip.gpx in Resources */,
+				141228051CD7A88200783A7D /* FitnessTrip.gpx in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
