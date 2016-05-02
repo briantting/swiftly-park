@@ -36,7 +36,7 @@ class ParkingSpot: MKPointAnnotation {
         return "lat: \(lat), long: \(long)"
     }
     
-    static let epsilon: Double = 5
+    static let epsilon: Double = 10
     
     init(_ coordinate: CLLocationCoordinate2D) {
         lat = coordinate.latitude

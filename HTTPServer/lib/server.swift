@@ -13,15 +13,15 @@ include "lib/http.swift"
 
 class Server {
     let sock : Socket
-
+    
     // ---- [ setup ] ---------------------------------------------------------
-
+    
     init(host : String = "0.0.0.0", port : Int) {
         sock = Socket(host: host, port: port)
     }
-
+    
     // ---- [ instance methods ] ----------------------------------------------
-
+    
     func run(closure : (request : HTTPRequest,
         response : HTTPResponse) -> () ) {
         while true {
@@ -30,13 +30,13 @@ class Server {
                 print("acceptClientSocket() failed.")
                 continue
             }
-
+            
             // get request
             let request = HTTPRequest(cs: cs)
-
+            
             // create response
             let response = HTTPResponse(cs: cs)
-
+            
             // run closure
             closure(request: request, response: response)
         }
