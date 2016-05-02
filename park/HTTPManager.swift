@@ -30,7 +30,7 @@ class HTTPManager {
         task = session.dataTaskWithURL(url!) {
             data, response, error in
             if let error = error {
-                //print(error.localizedDescription)
+                print(error.localizedDescription)
             } else if let httpResponse = response as? NSHTTPURLResponse {
                 if httpResponse.statusCode == 200 {
                     let content = NSString(data: data!, encoding: NSUTF8StringEncoding)

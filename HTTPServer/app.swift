@@ -147,15 +147,13 @@ struct ParkingSpots {
         
         let spotsInXRange = spotsByX.valuesBetween(XSpot(upperLeft), and: XSpot(lowerRight))
             .map({$0 as ParkingSpot})
-        print(upperLeft.latitude, upperLeft.longitude)
-        print(lowerRight.latitude, lowerRight.longitude)
         
         return spotsByY.valuesBetween(YSpot(upperLeft),
                                       and: YSpot(lowerRight),
                                       if: {spotsInXRange.contains($0.asXSpot())})
     }
     
-    mutating func remove    Spot(coordinate: CLLocationCoordinate2D) -> Void {
+    mutating func removeSpot(coordinate: CLLocationCoordinate2D) -> Void {
         spotsByX = spotsByX.remove(XSpot(coordinate))
         spotsByY = spotsByY.remove(YSpot(coordinate))
     }
@@ -235,6 +233,9 @@ indirect enum Node<T where T:Comparable, T:Hashable> : CustomStringConvertible {
     func insert(value: T) -> Node<T> {
         switch self {
         case let Tree(_, root, _, _):
+            if value == root {
+                return self
+            }
             return self
                 .substitute({$0.insert(value)},
                             forLeftBranchIf: value < root)!
@@ -646,7 +647,6 @@ func processGetCommand(msg : String, _ parkingSpots : ParkingSpots) -> String {
     let northWest = coordinates[0]
     let southEast = coordinates[1]
     let spotsWithinMap = parkingSpots.getSpots(northWest, southEast)
-    print(spotsWithinMap.count)
     return convertSpotsToString(spotsWithinMap)
 }
 
@@ -657,11 +657,17 @@ func processPostCommand(msg : String, inout _ parkingSpots : ParkingSpots) -> Vo
     let stringCoordinates = msg[commandIndex+1..<msg.characters.count]
     let coordinates = convertStringToSpots(stringCoordinates)
     
+    print("The tree beforePOST command: ")
+    print("XTree: \(parkingSpots.spotsByX)")
+    print("YTree: \(parkingSpots.spotsByY)")
+    
     if command == "ADD" {
+        print("POST ADD MESSAGE")
         for coordinate in coordinates {
             parkingSpots.addSpot(coordinate)
         }
     } else if command == "REMOVE" {
+        print("POST REMOVE MESSAGE")
         for coordinate in coordinates {
             parkingSpots.removeSpot(coordinate)
         }
@@ -671,8 +677,8 @@ func processPostCommand(msg : String, inout _ parkingSpots : ParkingSpots) -> Vo
     }
     
     print("The tree after POST command: ")
-    print(parkingSpots.spotsByX)
-    print(parkingSpots.spotsByY)
+    print("XTree: \(parkingSpots.spotsByX)")
+    print("YTree: \(parkingSpots.spotsByY)")
     
     
 }
@@ -749,7 +755,7 @@ app.run() {
     print("Client IP: \(clientAddress)")
 
     // print request headers
-    print(request.rawHeaders)
+    //print(request.rawHeaders)
     
     let responseMsg : String
     
@@ -762,7 +768,6 @@ app.run() {
         processPostCommand(request.commandMsg, &parkingSpots)
         responseMsg = "Post successful"
     }
-    print(responseMsg)
     response.sendRaw("HTTP/1.1 200 OK\n\n\(responseMsg)")
 }
 
