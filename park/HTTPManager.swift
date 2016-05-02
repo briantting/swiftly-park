@@ -14,19 +14,20 @@ class HTTPManager {
     // Sets up the URL session
     let session = NSURLSession(configuration: NSURLSessionConfiguration.defaultSessionConfiguration())
     // Will do the requesting and fetching of data
-    var task: NSURLSessionDataTask?
+    var getTask : NSURLSessionDataTask?
+    var postTask : NSURLSessionDataTask?
     var spots = [ParkingSpot]()
     
     func getParkingSpots(upperLeft: CLLocationCoordinate2D, _ lowerRight: CLLocationCoordinate2D) -> [ParkingSpot] {
         // Checks if task is already running. Cancels to avoid multiple requests.
-        if task != nil {
-            task?.cancel()
+        if getTask != nil {
+            getTask?.cancel()
         }
         let request = convertCoordinateToString(upperLeft, lowerRight)
         let url = NSURL(string: "\(ipAddress)\(request)")
         
         // 5
-        task = session.dataTaskWithURL(url!) {
+        getTask = session.dataTaskWithURL(url!) {
             data, response, error in
             if let error = error {
                 print(error.localizedDescription)
@@ -41,7 +42,7 @@ class HTTPManager {
             }
         }
         // Starts task
-        task?.resume()
+        getTask?.resume()
         //Need to wait for task to complete
         sleep(1)
         
@@ -67,14 +68,14 @@ class HTTPManager {
     }
     
     func postParkingSpot(coordinate : CLLocationCoordinate2D, _ addSpot : Bool) -> Void {
-        if task != nil {
-            task?.cancel()
+        if postTask != nil {
+            postTask?.cancel()
         }
         let request = convertCoordinateToString(coordinate, addSpot)
         let url = NSURL(string: "\(ipAddress)\(request)")
         let postURL = NSMutableURLRequest(URL: url!)
         postURL.HTTPMethod = "POST"
-        task = session.dataTaskWithRequest(postURL) {
+        postTask = session.dataTaskWithRequest(postURL) {
             data, response, error in
             guard data != nil && response != nil && error == nil else {
                 //print(error.debugDescription)
@@ -82,7 +83,7 @@ class HTTPManager {
             }
         }
         
-        task?.resume()
+        postTask?.resume()
     }
     
     func convertCoordinateToString(coordinate : CLLocationCoordinate2D, _ addSpot : Bool) -> String {
