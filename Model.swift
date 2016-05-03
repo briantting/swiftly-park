@@ -10,7 +10,7 @@ import Foundation
 import MapKit
 
 protocol Model {
-    func spotsWithinView(upperLeft: CLLocationCoordinate2D,
+    func getSpots(upperLeft: CLLocationCoordinate2D,
        _ lowerRight: CLLocationCoordinate2D) -> Set<ParkingSpot>
-    func add(spot: ParkingSpot)
+    mutating func addSpot(coordinate: CLLocationCoordinate2D)
 }

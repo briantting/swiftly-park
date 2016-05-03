@@ -7,7 +7,7 @@
 //
 
 import Foundation
-
+import MapKit
 
 protocol MapViewController {
     func getSpots() -> Set<ParkingSpot>

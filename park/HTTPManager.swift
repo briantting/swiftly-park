@@ -11,7 +11,7 @@ import MapKit
 
 
 class HTTPManager {
-    static let ipAddress = "http:localhost:3000/"
+    let ipAddress = "http:localhost:3000/"
     
     // Sets up the URL session
     static let session = NSURLSession(configuration: NSURLSessionConfiguration.defaultSessionConfiguration())

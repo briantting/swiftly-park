@@ -7,13 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		141228051CD7A88200783A7D /* FitnessTrip.gpx in Resources */ = {isa = PBXBuildFile; fileRef = 141228041CD7A88200783A7D /* FitnessTrip.gpx */; };
 		147839561CD91907002A03F2 /* MassPark.gpx in Resources */ = {isa = PBXBuildFile; fileRef = 147839551CD91907002A03F2 /* MassPark.gpx */; };
-		784D01D41CD3E1DA00613F71 /* HTTPManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784D01D31CD3E1DA00613F71 /* HTTPManager.swift */; };
 		784D01EA1CD3E32900613F71 /* HTTPManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784D01D31CD3E1DA00613F71 /* HTTPManager.swift */; };
 		784D02011CD3F1B900613F71 /* HTTPServer in Resources */ = {isa = PBXBuildFile; fileRef = 784D02001CD3F1B900613F71 /* HTTPServer */; };
+		AA038D271CD9227F008AD28E /* Controller.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA3FF4041CD7AB9300B693A9 /* Controller.swift */; };
 		AA3FF4031CD7AA9D00B693A9 /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA3FF4021CD7AA9D00B693A9 /* Model.swift */; };
-		AA3FF4051CD7AB9300B693A9 /* Controller.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA3FF4041CD7AB9300B693A9 /* Controller.swift */; };
 		AA480CD31CBC1231008294D0 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA480CD21CBC1231008294D0 /* AppDelegate.swift */; };
 		AA480CD51CBC1231008294D0 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA480CD41CBC1231008294D0 /* ViewController.swift */; };
 		AA480CD81CBC1231008294D0 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA480CD61CBC1231008294D0 /* Main.storyboard */; };
@@ -283,7 +281,6 @@
 				147839561CD91907002A03F2 /* MassPark.gpx in Resources */,
 				AA480CDA1CBC1231008294D0 /* Assets.xcassets in Resources */,
 				AA480CD81CBC1231008294D0 /* Main.storyboard in Resources */,
-				14FC4AEF1CD69965005EDB84 /* FitnessTrip.gpx in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -316,6 +313,7 @@
 				AA480CD51CBC1231008294D0 /* ViewController.swift in Sources */,
 				AA78DB831CD137EA0038331E /* ParkingSpot.swift in Sources */,
 				AA480CD31CBC1231008294D0 /* AppDelegate.swift in Sources */,
+				AA038D271CD9227F008AD28E /* Controller.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -323,7 +321,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				AA3FF4051CD7AB9300B693A9 /* Controller.swift in Sources */,
 				AA480CE81CBC1231008294D0 /* parkTests.swift in Sources */,
 				AA5141F01CD6C1530043DA48 /* MapView.swift in Sources */,
 				AA9C9FF51CD68ED40043AA6C /* Util.swift in Sources */,

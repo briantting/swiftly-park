@@ -125,7 +125,7 @@ func setupDefaultParkingSpots(inout parkingSpots : ParkingSpots) -> Void {
 // ---- [ server setup and "main" method] ------------------------------------------------------
 //Server is set up and continues to run in a while loop
 let app = Server(port: port)
-var parkingSpots = ParkingSpots()
+var parkingSpots: Model = ParkingSpots()
 
 print("Running server on port \(port)")
 setupDefaultParkingSpots(&parkingSpots)

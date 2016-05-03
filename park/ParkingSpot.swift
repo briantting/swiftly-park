@@ -9,22 +9,63 @@
 import Foundation
 import MapKit
 
-func approxLessThan(left: Double, _ right: Double, _ epsilon: Double) -> Bool {
+/**
+ - params left, right:
+ values to be compared
+ 
+ - param epsilon:
+ see returns
+ 
+ - returns:
+ true if left is less than right by more than epsilon
+ */
+func lessThanWithEpsilon(left: Double, _ right: Double, _ epsilon: Double) -> Bool {
     return right - left > epsilon
 }
 
+/**
+ - params left, right:
+ values to be compared
+ 
+ - param epsilon:
+ see returns
+ 
+ - returns:
+ true if difference between values is less than epsilon
+ */
 func almostEqual(left: Double, _ right: Double, _ epsilon: Double) -> Bool {
     return abs(left - right) < epsilon
 }
 
+/**
+ necessary for creating a binary tree of XSpots
+ 
+ - params left, right:
+ values to be compared
+ 
+ - returns:
+ true if left's x coordinate is less than right's x by more than ParkingSpot.epsilon
+ */
 func <(left: XSpot, right: XSpot) -> Bool {
-    return approxLessThan(left.x, right.x, ParkingSpot.epsilon)
+    return lessThanWithEpsilon(left.x, right.x, ParkingSpot.epsilon)
 }
 
+/**
+ necessary for creating a binary tree of YSpots
+ 
+ - params left, right:
+ values to be compared
+ 
+ - returns:
+ true if left's y coordinate is less than right's y by more than ParkingSpot.epsilon
+ */
 func <(left: YSpot, right: YSpot) -> Bool {
-    return approxLessThan(left.y, right.y, ParkingSpot.epsilon)
+    return lessThanWithEpsilon(left.y, right.y, ParkingSpot.epsilon)
 }
 
+/**
+  Object representing a parking spot location
+ */
 class ParkingSpot: MKPointAnnotation {
 //    var pinColor: UIColor
     var lat: Double
@@ -32,11 +73,17 @@ class ParkingSpot: MKPointAnnotation {
     var x: Double
     var y: Double
     
+   /**
+     necessary for comparing sets of ParkingSpot objects
+    */
     override var hashValue: Int {
         let strings = [self.x, self.y].map({String(Int(round($0)))})
         return Int(strings.reduce("", combine: (+)))!
     }
     
+   /**
+     how swift prints ParkingSpot objects
+    */
     override var description: String {
         return "lat: \(lat), long: \(long)"
     }
@@ -53,6 +100,9 @@ class ParkingSpot: MKPointAnnotation {
         self.coordinate = coordinate
     }
     
+    /**
+     necessary for comparison of sets of ParkingSpot objects
+    */
     override func isEqual(object: AnyObject?) -> Bool {
         if let spot = object as? ParkingSpot {
             return round(x) == round(spot.x)
@@ -63,15 +113,22 @@ class ParkingSpot: MKPointAnnotation {
 
 }
 
+/**
+ These classes are explained under ParkingSpots
+*/
 class XSpot: ParkingSpot, Comparable { }
-
 class YSpot: ParkingSpot, Comparable {
     func asXSpot() -> XSpot {
         return XSpot(self.coordinate)
     }
 }
 
-struct ParkingSpots {
+/**
+ ParkingSpots is essentially a pair of trees of ParkingSpot objects,
+ one sorted by x, the other sorted by y. This allows us to quickly
+ retrieve parking spots corresponging to 
+*/
+struct ParkingSpots: Model {
     var spotsByX = Node<XSpot>.Leaf
     var spotsByY = Node<YSpot>.Leaf
     
