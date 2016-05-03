@@ -11,6 +11,7 @@ include "settings.swift"
 include "lib/server.swift"
 include "../park/ParkingSpot.swift"
 include "../park/Tree.swift"
+include "../park/Model.swift"
 
 // ---- [ imports ] ----------------------------------------------------------
 
@@ -20,7 +21,7 @@ import MapKit
 
 
 // ---- [ Process Get Command ] ------------------------------------------------------
-func processGetCommand(msg : String, _ parkingSpots : ParkingSpots) -> String {
+func processGetCommand(msg : String, _ parkingSpots : Model) -> String {
     let coordinates = convertStringToSpots(msg)
     guard coordinates.count == 2 else {
         return String("Invalid Get Request")
@@ -32,7 +33,7 @@ func processGetCommand(msg : String, _ parkingSpots : ParkingSpots) -> String {
 }
 
 // ---- [ Process Post Command ] ------------------------------------------------------
-func processPostCommand(msg : String, inout _ parkingSpots : ParkingSpots) -> Void {
+func processPostCommand(msg : String, inout _ parkingSpots : Model) -> Void {
     let commandIndex = msg.indexOf(",")
     let command = msg[0..<commandIndex]
     let stringCoordinates = msg[commandIndex+1..<msg.characters.count]
@@ -55,11 +56,19 @@ func processPostCommand(msg : String, inout _ parkingSpots : ParkingSpots) -> Vo
 
 // ---- [ Adapters for networking and binary trees] ------------------------------------------------------
 
-/*
- * Returns a string with this format:
- * "39.23432143,-132.23141234123,54.2341312,-100.32413243"
- * There can be zero or many coordinates in the string
- * The first value of a pair is latitude, and the second value is longitude
+/**
+ Converts ParkingSpots to a string.
+ 
+ -returns:
+ A single string representing parking spot coordinates
+ 
+ -parameters:
+    - spots: A set of parking spots
+ 
+ Returns a string with this format:
+ "39.23432143,-132.23141234123,54.2341312,-100.32413243"
+ There can be zero or many coordinates in the string
+ The first value of a pair is latitude, and the second value is longitude
  */
 func convertSpotsToString(spots : Set<ParkingSpot>) -> String {
     var stringSpots = ""
@@ -109,7 +118,7 @@ func convertStringToSpots(msg : String) -> [CLLocationCoordinate2D] {
 /*
  * A setup function for demoing.
  */
-func setupDefaultParkingSpots(inout parkingSpots : ParkingSpots) -> Void {
+func setupDefaultParkingSpots(inout parkingSpots : Model) -> Void {
     let appleCampus = CLLocationCoordinate2D(latitude: 37.33182, longitude: -122.03118)
     let ducati = CLLocationCoordinate2D(latitude: 37.3276574, longitude: -122.0350399)
     let bagelStreetCafe = CLLocationCoordinate2D(latitude: 37.3315193, longitude: -122.0327043)
@@ -125,7 +134,7 @@ func setupDefaultParkingSpots(inout parkingSpots : ParkingSpots) -> Void {
 // ---- [ server setup and "main" method] ------------------------------------------------------
 //Server is set up and continues to run in a while loop
 let app = Server(port: port)
-var parkingSpots = ParkingSpots()
+var parkingSpots : Model = ParkingSpots()
 
 print("Running server on port \(port)")
 setupDefaultParkingSpots(&parkingSpots)
