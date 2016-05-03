@@ -125,7 +125,7 @@ class YSpot: ParkingSpot, Comparable {
 }
 
 /**
- ParkingSpots is essentially a pair of trees of ParkingSpot objects,
+ ParkingSpots is essentially a pair of binary search trees of ParkingSpot objects,
  one sorted by x, the other sorted by y. This allows us to quickly
  retrieve parking spots corresponging to 
 */
@@ -133,14 +133,29 @@ struct ParkingSpots: Model {
     var spotsByX = Node<XSpot>.Leaf
     var spotsByY = Node<YSpot>.Leaf
     
-    mutating func addSpot(coordinate: CLLocationCoordinate2D) -> Void {
+    /**
+     adds a coordinate to both binary search trees
+     
+     - param coordinate:
+     coordinate of spot to be added
+    */
+    mutating func addSpot(coordinate: CLLocationCoordinate2D) {
         spotsByX = spotsByX.insert(XSpot(coordinate))
         spotsByY = spotsByY.insert(YSpot(coordinate))
     }
     
+    /**
+     - param upperleft:
+     coordinate of upper left corner of the map
+     
+     - param lowerRight:
+     coordinate of lower right corner of the map
+     
+     - returns:
+     set of parking spots within map view
+    */
     func spotsWithinView(upperLeft: CLLocationCoordinate2D,
-                         _ lowerRight: CLLocationCoordinate2D) -> Set<ParkingSpot> {
-        print("TEST TEST")
+                       _ lowerRight: CLLocationCoordinate2D) -> Set<ParkingSpot> {
         let spotsInXRange = spotsByX
             .valuesBetween(XSpot(upperLeft), and: XSpot(lowerRight))
             .map({$0 as ParkingSpot})
@@ -152,12 +167,27 @@ struct ParkingSpots: Model {
                            if: {spotsInXRange.contains($0.asXSpot())})
     }
     
-    mutating func removeSpot(coordinate: CLLocationCoordinate2D) -> Void {
-        print("TEST TEST")
+    /**
+     removes a parking spot from bothe binary search trees
+
+     - param coordinate:
+     coordinate of parkingSpot to remove
+    */
+    mutating func removeSpot(coordinate: CLLocationCoordinate2D) {
         spotsByX = spotsByX.remove(XSpot(coordinate))
         spotsByY = spotsByY.remove(YSpot(coordinate))
     }
     
+    /**
+     searches for a parking spot within the specified radius of
+     the coordinate and removes it from both trees
+
+     - param coordinate:
+     coordinate to search within radius of.
+     
+     - param radius:
+     see above
+    */
     mutating func removeSpotNear(coordinate: CLLocationCoordinate2D,
                                  radius: Double) {
         // convert point
