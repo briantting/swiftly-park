@@ -53,7 +53,7 @@ func processPostCommand(msg : String, inout _ parkingSpots : ParkingSpots) -> Vo
     } else if command == "REMOVE" {
         print("POST REMOVE MESSAGE")
         for coordinate in coordinates {
-            parkingSpots.removeSpot(coordinate)
+            parkingSpots.removeSpotNear(coordinate, radius: 5)
         }
     }
     else {

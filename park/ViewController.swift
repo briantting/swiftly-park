@@ -11,7 +11,6 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
     var prevLocation: CLLocation? = nil // tracks previous location for speed calculation
     var prevSpeed: Double = 5 // tracks previous speed
     var locationManager: CLLocationManager = CLLocationManager()
-    var spotsInView = Set<ParkingSpot>()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -81,16 +80,27 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
     // updates annotations
     func updateMap() {
         
-        // adds new parking spots
-        let (upperLeft, lowerRight) = mapView.getMapBounds()
-        let parkingSpots = server.getParkingSpots(upperLeft, lowerRight)
+        // spots that are on the map
+        let spotsInView = Set(mapView.annotations
+            .filter({$0 is ParkingSpot}).map({$0 as! ParkingSpot}))
         
-        // removes old parking spots
-        mapView.removeAnnotations(mapView.annotations.filter() {$0 !== mapView.userLocation})
-
-        mapView.showsUserLocation = true
-        for spot in parkingSpots {
-            mapView.addAnnotation(spot)
+        let (upperLeft, lowerRight) = mapView.getMapBounds()
+        
+        // spots that should be on the map
+        let updatedParkingSpots = Set(server.getParkingSpots(upperLeft, lowerRight))
+        
+        // remove parking spots that are not in updatedParkingSpots
+        let toRemove = Array(spotsInView.subtract(updatedParkingSpots))
+        for spot in toRemove {
+            print("removing", spot)
+            mapView.removeAnnotation(spot)
         }
+//        mapView.removeAnnotations(toRemove)
+        
+        // add parking spots that are new in updatedParkingSpots
+        let toAdd = Array(updatedParkingSpots.subtract(spotsInView))
+        mapView.addAnnotations(toAdd)
+        
+        mapView.showsUserLocation = true
     }
 }
