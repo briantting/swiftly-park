@@ -8,25 +8,28 @@
 import Foundation
 import MapKit
 
+
+
 class HTTPManager {
-    let ipAddress = "http://158.130.110.135:3000/"
-    
+    static let ipAddress = "http://127.0.0.1:3000/"
     // Sets up the URL session
-    let session = NSURLSession(configuration: NSURLSessionConfiguration.defaultSessionConfiguration())
+    static let session = NSURLSession(configuration: NSURLSessionConfiguration.defaultSessionConfiguration())
     // Will do the requesting and fetching of data
-    var getTask : NSURLSessionDataTask?
-    var postTask : NSURLSessionDataTask?
-    var spots = [ParkingSpot]()
+    static var getTask : NSURLSessionDataTask?
+    static var postTask : NSURLSessionDataTask?
     
-    func getParkingSpots(upperLeft: CLLocationCoordinate2D, _ lowerRight: CLLocationCoordinate2D) -> [ParkingSpot] {
+    
+    
+    
+    class func getParkingSpots(upperLeft: CLLocationCoordinate2D, _ lowerRight: CLLocationCoordinate2D, completionHandler: (parkingSpots : Set<ParkingSpot>) -> ()) -> Void {
         // Checks if task is already running. Cancels to avoid multiple requests.
+        
         if getTask != nil {
             getTask?.cancel()
         }
-        let request = convertCoordinateToString(upperLeft, lowerRight)
+        let request = HTTPManager.convertCoordinateToString(upperLeft, lowerRight)
         let url = NSURL(string: "\(ipAddress)\(request)")
         
-        // 5
         getTask = session.dataTaskWithURL(url!) {
             data, response, error in
             if let error = error {
@@ -34,22 +37,23 @@ class HTTPManager {
             } else if let httpResponse = response as? NSHTTPURLResponse {
                 if httpResponse.statusCode == 200 {
                     let content = NSString(data: data!, encoding: NSUTF8StringEncoding)
-                    //print("The server's reply: \(content!)")
+                    print("The server's reply: \(content!)")
                     if content?.length > 0 {
-                        self.spots = self.convertStringToParkingSpots(content!)
+                        let spots = self.convertStringToParkingSpots(content!)
+                        completionHandler(parkingSpots: spots)
                     }
                 }
             }
         }
         // Starts task
         getTask?.resume()
-        //Need to wait for task to complete
-        sleep(1)
         
-        return self.spots
     }
     
-    func convertStringToParkingSpots(serverString : NSString) -> [ParkingSpot] {
+    /*
+     *
+     */
+    class func convertStringToParkingSpots(serverString : NSString) -> Set<ParkingSpot> {
         let coordinateList = serverString.componentsSeparatedByString(",")
         var latitudes = [Double]()
         var longitudes = [Double]()
@@ -64,21 +68,26 @@ class HTTPManager {
         
         let spots = latitudes.enumerate().map ({ParkingSpot(CLLocationCoordinate2D(latitude: latitudes[$0.index], longitude: longitudes[$0.index]))})
         
-        return spots
+        let setOfSpots = Set(spots)
+        
+        return setOfSpots
     }
     
-    func postParkingSpot(coordinate : CLLocationCoordinate2D, _ addSpot : Bool) -> Void {
-        if postTask != nil {
-            postTask?.cancel()
+    /*
+     *
+     */
+    class func postParkingSpot(coordinate : CLLocationCoordinate2D, _ addSpot : Bool) -> Void {
+        if self.postTask != nil {
+            self.postTask?.cancel()
         }
-        let request = convertCoordinateToString(coordinate, addSpot)
+        let request = HTTPManager.convertCoordinateToString(coordinate, addSpot)
         let url = NSURL(string: "\(ipAddress)\(request)")
         let postURL = NSMutableURLRequest(URL: url!)
         postURL.HTTPMethod = "POST"
         postTask = session.dataTaskWithRequest(postURL) {
             data, response, error in
             guard data != nil && response != nil && error == nil else {
-                //print(error.debugDescription)
+                print(error.debugDescription)
                 return
             }
         }
@@ -86,7 +95,10 @@ class HTTPManager {
         postTask?.resume()
     }
     
-    func convertCoordinateToString(coordinate : CLLocationCoordinate2D, _ addSpot : Bool) -> String {
+    /*
+     *
+     */
+    class func convertCoordinateToString(coordinate : CLLocationCoordinate2D, _ addSpot : Bool) -> String {
         var stringCoordinate = String("")
         if addSpot {
             stringCoordinate += "ADD,"
@@ -100,7 +112,10 @@ class HTTPManager {
         return stringCoordinate
     }
     
-    func convertCoordinateToString(coordinate1 : CLLocationCoordinate2D, _ coordinate2 : CLLocationCoordinate2D) -> String {
+    /*
+     *
+     */
+    class func convertCoordinateToString(coordinate1 : CLLocationCoordinate2D, _ coordinate2 : CLLocationCoordinate2D) -> String {
         var stringCoordinate = String("")
         stringCoordinate += String(coordinate1.latitude)
         stringCoordinate += ","

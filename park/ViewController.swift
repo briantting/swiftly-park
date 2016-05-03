@@ -5,12 +5,11 @@ import MapKit
 class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDelegate {
 
     @IBOutlet weak var mapView: MKMapView!
-    var server: HTTPManager = HTTPManager()
 
     var isDriving: Bool = true // tracks if user is driving
     var prevLocation: CLLocation? = nil // tracks previous location for speed calculation
     var prevSpeed: Double = 5 // tracks previous speed
-    
+    var spots = [ParkingSpot]()
     var locationManager: CLLocationManager = CLLocationManager()
     
     override func viewDidLoad() {
@@ -29,7 +28,8 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
         locationManager.startUpdatingLocation()
         
         // updates map every 5 seconds
-        NSTimer.scheduledTimerWithTimeInterval(5, target: self, selector: #selector(ViewController.updateMap), userInfo: nil, repeats: true)
+        NSTimer.scheduledTimerWithTimeInterval(0.5, target: self, selector: #selector(ViewController.updateMap), userInfo: nil, repeats: true)
+        mapView.tintColor = UIColor.redColor()
     }
     
     override func didReceiveMemoryWarning() {
@@ -52,16 +52,17 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
         // Park
         if isDriving && speed < 5 {
             isDriving = false
-            server.postParkingSpot(prevLocation!.coordinate, false)
+            mapView.tintColor = UIColor.blueColor()
+            HTTPManager.postParkingSpot(prevLocation!.coordinate, false)
             print("Parked")
         }
         // Unpark
         else if !isDriving && speed >= 5 {
             isDriving = true
-            server.postParkingSpot(prevLocation!.coordinate, true)
+            mapView.tintColor = UIColor.redColor()
+            HTTPManager.postParkingSpot(prevLocation!.coordinate, true)
             print("Unparked")
         }
-        
         prevLocation = latestLocation
         prevSpeed = speed
     }
@@ -80,10 +81,12 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
         mapView.removeAnnotations(mapView.annotations.filter() {$0 !== mapView.userLocation})
         // adds new parking spots
         let (upperLeft, lowerRight) = mapView.getMapBounds()
-        let parkingSpots = server.getParkingSpots(upperLeft, lowerRight)
-
+        HTTPManager.getParkingSpots(upperLeft, lowerRight, completionHandler: {parkingSpots in
+            self.spots = parkingSpots
+        })
+        
         mapView.showsUserLocation = true
-        for spot in parkingSpots {
+        for spot in spots {
             mapView.addAnnotation(spot)
         }
     }

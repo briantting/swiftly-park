@@ -81,8 +81,8 @@ struct ParkingSpots {
         let spotsInXRange = spotsByX
             .valuesBetween(XSpot(upperLeft), and: XSpot(lowerRight))
             .map({$0 as ParkingSpot})
-        print(upperLeft.latitude, upperLeft.longitude)
-        print(lowerRight.latitude, lowerRight.longitude)
+        //print(upperLeft.latitude, upperLeft.longitude)
+        //print(lowerRight.latitude, lowerRight.longitude)
             
         return spotsByY.valuesBetween(YSpot(upperLeft),
                            and: YSpot(lowerRight),
