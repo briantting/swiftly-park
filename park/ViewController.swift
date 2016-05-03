@@ -11,6 +11,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
     var prevLocation: CLLocation? = nil // tracks previous location for speed calculation
     var prevSpeed: Double = 5 // tracks previous speed
     var time: Double = NSDate.timeIntervalSinceReferenceDate() // tracks time
+    var spots = [ParkingSpot]()
     
     var locationManager: CLLocationManager = CLLocationManager()
     
@@ -50,17 +51,17 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
         // Park
         if isDriving && speed < 5 {
             isDriving = false
-            server.postParkingSpot(prevLocation!.coordinate, false)
+            HTTPManager.postParkingSpot(prevLocation!.coordinate, false)
             print("Parked")
         }
         // Unpark
         else if !isDriving && speed >= 5 {
             isDriving = true
-            server.postParkingSpot(prevLocation!.coordinate, true)
+            HTTPManager.postParkingSpot(prevLocation!.coordinate, true)
             print("Unparked")
         }
         // updates every 30 seconds
-        if NSDate.timeIntervalSinceReferenceDate() - time > 10 {
+        if NSDate.timeIntervalSinceReferenceDate() - time > 1 {
             updateMap()
             time = NSDate.timeIntervalSinceReferenceDate()
         }
@@ -83,10 +84,11 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
         mapView.removeAnnotations(mapView.annotations.filter() {$0 !== mapView.userLocation})
         // adds new parking spots
         let (upperLeft, lowerRight) = mapView.getMapBounds()
-        let parkingSpots = server.getParkingSpots(upperLeft, lowerRight)
-
+        HTTPManager.getParkingSpots(upperLeft, lowerRight, completionHandler: {parkingSpots in
+            self.spots = parkingSpots
+        })
         mapView.showsUserLocation = true
-        for spot in parkingSpots {
+        for spot in spots {
             mapView.addAnnotation(spot)
         }
     }

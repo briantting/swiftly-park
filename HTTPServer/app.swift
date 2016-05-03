@@ -253,24 +253,36 @@ struct HTTPRequest {
         self.cs = cs
         let lines = cs.fetchRequest()
         
+        guard lines.count > 1 else {
+            self.isGetCommand = false
+            self.isInvalidRequest = true
+            self.raw = tempRaw
+            self.rawHeaders = tempRawHeaders
+            self.commandMsg = ""
+            return
+        }
+        
         
         //Get command and message
         let requestMessage = lines[0].componentsSeparatedByString(" ")
         let command = requestMessage[0]
-        commandMsg = requestMessage[1][1..<requestMessage[1].characters.count]
+        self.commandMsg = requestMessage[1].stringByTrimmingCharactersInSet(NSCharacterSet.punctuationCharacterSet())
+        
         
         
         // parse request headers
         for i in 1..<lines.count {
-            let index = lines[i].indexOf(":")
-            guard index != -1 else {
-                continue
+            if lines[i].containsString(":") {
+                let contents = lines[i].componentsSeparatedByString(":")
+                let headerName = contents[0]
+                let headerContent = contents[1]
+                tempRawHeaders[headerName] = headerContent
+                tempRaw += lines[i]
             }
-            let headerName = lines[i][0..<index]
-            let headerContent = lines[i][index+1..<lines[i].characters.count]
-            tempRawHeaders[headerName] = headerContent
-            tempRaw += lines[i]
+            
         }
+        
+        print(command)
         
         if command == "GET" {
             isGetCommand = true
@@ -329,6 +341,8 @@ class Server {
                 continue
             }
             
+            print("START")
+            
             // get request
             let request = HTTPRequest(cs: cs)
             
@@ -378,7 +392,7 @@ class ParkingSpot: MKPointAnnotation {
         return "lat: \(lat), long: \(long)"
     }
     
-    static let epsilon: Double = 5
+    static let epsilon: Double = 10
     
     init(_ coordinate: CLLocationCoordinate2D) {
         lat = coordinate.latitude
@@ -423,8 +437,8 @@ struct ParkingSpots {
         let spotsInXRange = spotsByX
             .valuesBetween(XSpot(upperLeft), and: XSpot(lowerRight))
             .map({$0 as ParkingSpot})
-        print(upperLeft.latitude, upperLeft.longitude)
-        print(lowerRight.latitude, lowerRight.longitude)
+        //print(upperLeft.latitude, upperLeft.longitude)
+        //print(lowerRight.latitude, lowerRight.longitude)
             
         return spotsByY.valuesBetween(YSpot(upperLeft),
                            and: YSpot(lowerRight),
@@ -649,9 +663,9 @@ import MapKit
 
 // ---- [ Process Get Command ] ------------------------------------------------------
 func processGetCommand(msg : String, _ parkingSpots : ParkingSpots) -> String {
-    print("GET Command: Here is what is in the binary trees")
-    print("XTree: \(parkingSpots.spotsByX)")
-    print("YTree: \(parkingSpots.spotsByY)")
+//    print("GET Command: Here is what is in the binary trees")
+//    print("XTree: \(parkingSpots.spotsByX)")
+//    print("YTree: \(parkingSpots.spotsByY)")
     let coordinates = convertStringToSpots(msg)
     guard coordinates.count == 2 else {
         return String("Invalid Get Request")
@@ -669,17 +683,17 @@ func processPostCommand(msg : String, inout _ parkingSpots : ParkingSpots) -> Vo
     let stringCoordinates = msg[commandIndex+1..<msg.characters.count]
     let coordinates = convertStringToSpots(stringCoordinates)
     
-    print("The tree beforePOST command: ")
-    print("XTree: \(parkingSpots.spotsByX)")
-    print("YTree: \(parkingSpots.spotsByY)")
+//    print("The tree beforePOST command: ")
+//    print("XTree: \(parkingSpots.spotsByX)")
+//    print("YTree: \(parkingSpots.spotsByY)")
     
     if command == "ADD" {
-        print("POST ADD MESSAGE")
+//        print("POST ADD MESSAGE")
         for coordinate in coordinates {
             parkingSpots.addSpot(coordinate)
         }
     } else if command == "REMOVE" {
-        print("POST REMOVE MESSAGE")
+//        print("POST REMOVE MESSAGE")
         for coordinate in coordinates {
             parkingSpots.removeSpot(coordinate)
         }
@@ -688,9 +702,9 @@ func processPostCommand(msg : String, inout _ parkingSpots : ParkingSpots) -> Vo
         print("Invalid POST command")
     }
     
-    print("The tree after POST command: ")
-    print("XTree: \(parkingSpots.spotsByX)")
-    print("YTree: \(parkingSpots.spotsByY)")
+//    print("The tree after POST command: ")
+//    print("XTree: \(parkingSpots.spotsByX)")
+//    print("YTree: \(parkingSpots.spotsByY)")
     
     
 }
@@ -729,7 +743,7 @@ func convertStringToSpots(msg : String) -> [CLLocationCoordinate2D] {
     }
     
     let spots = latitudes.enumerate().map ({CLLocationCoordinate2D(latitude: latitudes[$0.index], longitude: longitudes[$0.index])})
-    print(spots)
+//    print(spots)
     
     return spots
 }
@@ -773,6 +787,7 @@ app.run() {
     
     if request.isInvalidRequest {
         responseMsg = "Invalid request"
+        print(responseMsg)
     }
     else if request.isGetCommand {
         responseMsg = processGetCommand(request.commandMsg, parkingSpots)
@@ -781,6 +796,7 @@ app.run() {
         responseMsg = "Post successful"
     }
     response.sendRaw("HTTP/1.1 200 OK\n\n\(responseMsg)")
+    print("END")
 }
 
 

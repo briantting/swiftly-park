@@ -28,24 +28,36 @@ struct HTTPRequest {
         self.cs = cs
         let lines = cs.fetchRequest()
         
+        guard lines.count > 1 else {
+            self.isGetCommand = false
+            self.isInvalidRequest = true
+            self.raw = tempRaw
+            self.rawHeaders = tempRawHeaders
+            self.commandMsg = ""
+            return
+        }
+        
         
         //Get command and message
         let requestMessage = lines[0].componentsSeparatedByString(" ")
         let command = requestMessage[0]
-        commandMsg = requestMessage[1][1..<requestMessage[1].characters.count]
+        self.commandMsg = requestMessage[1].stringByTrimmingCharactersInSet(NSCharacterSet.punctuationCharacterSet())
+        
         
         
         // parse request headers
         for i in 1..<lines.count {
-            let index = lines[i].indexOf(":")
-            guard index != -1 else {
-                continue
+            if lines[i].containsString(":") {
+                let contents = lines[i].componentsSeparatedByString(":")
+                let headerName = contents[0]
+                let headerContent = contents[1]
+                tempRawHeaders[headerName] = headerContent
+                tempRaw += lines[i]
             }
-            let headerName = lines[i][0..<index]
-            let headerContent = lines[i][index+1..<lines[i].characters.count]
-            tempRawHeaders[headerName] = headerContent
-            tempRaw += lines[i]
+            
         }
+        
+        print("Command received: \(command)")
         
         if command == "GET" {
             isGetCommand = true
