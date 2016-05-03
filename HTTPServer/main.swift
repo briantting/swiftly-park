@@ -11,7 +11,7 @@ include "settings.swift"
 include "lib/server.swift"
 include "../park/ParkingSpot.swift"
 include "../park/Tree.swift"
-include "../park/Model.swift"
+include "../Model.swift"
 
 // ---- [ imports ] ----------------------------------------------------------
 
@@ -28,12 +28,13 @@ func processGetCommand(msg : String, _ parkingSpots : Model) -> String {
     }
     let northWest = coordinates[0]
     let southEast = coordinates[1]
-    let spotsWithinMap = parkingSpots.getSpots(northWest, southEast)
+    let spotsWithinMap = parkingSpots.spotsWithinView(northWest, southEast)
     return convertSpotsToString(spotsWithinMap)
 }
 
 // ---- [ Process Post Command ] ------------------------------------------------------
 func processPostCommand(msg : String, inout _ parkingSpots : Model) -> Void {
+    let appleLocationAccuracy = 5.0
     let commandIndex = msg.indexOf(",")
     let command = msg[0..<commandIndex]
     let stringCoordinates = msg[commandIndex+1..<msg.characters.count]
@@ -45,7 +46,7 @@ func processPostCommand(msg : String, inout _ parkingSpots : Model) -> Void {
         }
     } else if command == "REMOVE" {
         for coordinate in coordinates {
-            parkingSpots.removeSpotNear(coordinate, radius: 5)
+            parkingSpots.removeSpotNear(coordinate, radius: appleLocationAccuracy)
         }
     }
     else {
