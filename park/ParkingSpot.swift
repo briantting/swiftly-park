@@ -123,9 +123,9 @@ struct ParkingSpots {
         // remove random choice from spots within radius
         if let spot = nearby.first {
             removeSpot(spot.coordinate)
-            print("Removed Spot")
+            print("Removed Spot:", spot.coordinate)
         } else {
-            print("no spot to remove")
+            print("No spot to remove.")
         }
     }
 }

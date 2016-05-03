@@ -351,6 +351,14 @@ class Server {
 import Foundation
 import MapKit
 
+func approxLessThan(left: Double, _ right: Double, _ epsilon: Double) -> Bool {
+    return right - left > epsilon
+}
+
+func almostEqual(left: Double, _ right: Double, _ epsilon: Double) -> Bool {
+    return abs(left - right) < epsilon
+}
+
 func <(left: XSpot, right: XSpot) -> Bool {
     return approxLessThan(left.x, right.x, ParkingSpot.epsilon)
 }
@@ -457,7 +465,7 @@ struct ParkingSpots {
         // remove random choice from spots within radius
         if let spot = nearby.first {
             removeSpot(spot.coordinate)
-            print("Removed Spot")
+            print("Removed Spot:", spot.coordinate)
         } else {
             print("no spot to remove")
         }
