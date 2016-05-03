@@ -10,7 +10,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
     var isDriving: Bool = true // tracks if user is driving
     var prevLocation: CLLocation? = nil // tracks previous location for speed calculation
     var prevSpeed: Double = 5 // tracks previous speed
-    var spots = [ParkingSpot]()
+    var spots = Set<ParkingSpot>()
     var locationManager: CLLocationManager = CLLocationManager()
     
     override func viewDidLoad() {
@@ -80,28 +80,26 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
     // updates annotations
     func updateMap() {
         
+        // populate self.spots with correct spots
+        let (upperLeft, lowerRight) = mapView.getMapBounds()
+		HTTPManager.getParkingSpots(upperLeft, lowerRight, completionHandler: {parkingSpots in
+            self.spots = parkingSpots
+        })
+        
         // spots that are on the map
         let spotsInView = Set(mapView.annotations
             .filter({$0 is ParkingSpot}).map({$0 as! ParkingSpot}))
         
-        let (upperLeft, lowerRight) = mapView.getMapBounds()
-        
-        // spots that should be on the map
-		HTTPManager.getParkingSpots(upperLeft, lowerRight, completionHandler: {parkingSpots in
-            self.spots = parkingSpots
-        })
-        let updatedParkingSpots = Set(server.getParkingSpots(upperLeft, lowerRight))
-        
         // remove parking spots that are not in updatedParkingSpots
-        let toRemove = Array(spotsInView.subtract(updatedParkingSpots))
+        let toRemove = Array(spotsInView.subtract(self.spots))
         for spot in toRemove {
             print("removing", spot)
-            mapView.removeAnnotation(spot)
+//            mapView.removeAnnotation(spot)
         }
-//        mapView.removeAnnotations(toRemove)
+        mapView.removeAnnotations(toRemove)
         
         // add parking spots that are new in updatedParkingSpots
-        let toAdd = Array(updatedParkingSpots.subtract(spotsInView))
+        let toAdd = Array(self.spots.subtract(spotsInView))
         mapView.addAnnotations(toAdd)
         
         mapView.showsUserLocation = true
