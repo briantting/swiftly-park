@@ -10,7 +10,7 @@
 		147839561CD91907002A03F2 /* MassPark.gpx in Resources */ = {isa = PBXBuildFile; fileRef = 147839551CD91907002A03F2 /* MassPark.gpx */; };
 		784D01EA1CD3E32900613F71 /* HTTPManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784D01D31CD3E1DA00613F71 /* HTTPManager.swift */; };
 		784D02011CD3F1B900613F71 /* HTTPServer in Resources */ = {isa = PBXBuildFile; fileRef = 784D02001CD3F1B900613F71 /* HTTPServer */; };
-		AA038D271CD9227F008AD28E /* Controller.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA3FF4041CD7AB9300B693A9 /* Controller.swift */; };
+		785EE1431CD9344200C225B0 /* ParkingNetworking.swift in Sources */ = {isa = PBXBuildFile; fileRef = 785EE1411CD933EB00C225B0 /* ParkingNetworking.swift */; };
 		AA3FF4031CD7AA9D00B693A9 /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA3FF4021CD7AA9D00B693A9 /* Model.swift */; };
 		AA480CD31CBC1231008294D0 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA480CD21CBC1231008294D0 /* AppDelegate.swift */; };
 		AA480CD51CBC1231008294D0 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA480CD41CBC1231008294D0 /* ViewController.swift */; };
@@ -49,6 +49,7 @@
 		147839551CD91907002A03F2 /* MassPark.gpx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MassPark.gpx; sourceTree = "<group>"; };
 		784D01D31CD3E1DA00613F71 /* HTTPManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HTTPManager.swift; sourceTree = "<group>"; };
 		784D02001CD3F1B900613F71 /* HTTPServer */ = {isa = PBXFileReference; lastKnownFileType = folder; path = HTTPServer; sourceTree = "<group>"; };
+		785EE1411CD933EB00C225B0 /* ParkingNetworking.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ParkingNetworking.swift; sourceTree = "<group>"; };
 		AA0B463E1CCFF7C8001F9ECD /* ParkingSpot.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ParkingSpot.swift; sourceTree = "<group>"; };
 		AA3FF4021CD7AA9D00B693A9 /* Model.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Model.swift; path = ../Model.swift; sourceTree = "<group>"; };
 		AA3FF4041CD7AB9300B693A9 /* Controller.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Controller.swift; sourceTree = "<group>"; };
@@ -144,6 +145,7 @@
 				AA5141EF1CD6C1530043DA48 /* MapView.swift */,
 				AA9C9FF41CD68ED40043AA6C /* Util.swift */,
 				784D01D31CD3E1DA00613F71 /* HTTPManager.swift */,
+				785EE1411CD933EB00C225B0 /* ParkingNetworking.swift */,
 			);
 			name = park;
 			path = ../park;
@@ -312,6 +314,7 @@
 				AA480D011CBC1279008294D0 /* Tree.swift in Sources */,
 				AA480CD51CBC1231008294D0 /* ViewController.swift in Sources */,
 				AA78DB831CD137EA0038331E /* ParkingSpot.swift in Sources */,
+				785EE1431CD9344200C225B0 /* ParkingNetworking.swift in Sources */,
 				AA480CD31CBC1231008294D0 /* AppDelegate.swift in Sources */,
 				AA038D271CD9227F008AD28E /* Controller.swift in Sources */,
 			);

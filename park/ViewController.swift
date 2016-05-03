@@ -12,11 +12,12 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
     @IBOutlet weak var mapView: MKMapView!
 
     var spots = Set<ParkingSpot>() // set of parking spots
-    
     var locationManager: CLLocationManager = CLLocationManager()
     var isDriving: Bool = true // tracks if user is driving
     var prevLocation: CLLocation? = nil // tracks previous location for speed calculation
     var prevSpeed: Double = 5 // tracks previous speed
+    let getParkingSpotsWithinView = HTTPManager.getParkingSpots
+    let postParkingSpotUpdate = HTTPManager.postParkingSpot
     
     /**
      
@@ -78,7 +79,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
 
         // populate self.spots with correct spots
         let (upperLeft, lowerRight) = mapView.getMapBounds()
-		HTTPManager.getParkingSpots(upperLeft, lowerRight, completionHandler: {parkingSpots in self.spots = parkingSpots})
+		getParkingSpotsWithinView(upperLeft, lowerRight, completionHandler: {parkingSpots in self.spots = parkingSpots})
         
         // spots that are on the map
         let spotsInView = Set(mapView.annotations.filter({$0 is ParkingSpot}).map({$0 as! ParkingSpot}))
@@ -120,14 +121,14 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
         if isDriving && speed < 5 {
             isDriving = false
             mapView.tintColor = UIColor.blueColor()
-            HTTPManager.postParkingSpot(prevLocation!.coordinate, false)
+            postParkingSpotUpdate(prevLocation!.coordinate, false)
             print("Parked")
         }
         // Unpark
         else if !isDriving && speed >= 5 {
             isDriving = true
             mapView.tintColor = UIColor.redColor()
-            HTTPManager.postParkingSpot(prevLocation!.coordinate, true)
+            postParkingSpotUpdate(prevLocation!.coordinate, true)
             print("Unparked")
         }
         prevLocation = latestLocation

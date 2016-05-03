@@ -117,6 +117,7 @@ class ParkingSpot: MKPointAnnotation {
  These classes are explained under ParkingSpots
 */
 class XSpot: ParkingSpot, Comparable { }
+
 class YSpot: ParkingSpot, Comparable {
     func asXSpot() -> XSpot {
         return XSpot(self.coordinate)
@@ -132,14 +133,13 @@ struct ParkingSpots: Model {
     var spotsByX = Node<XSpot>.Leaf
     var spotsByY = Node<YSpot>.Leaf
     
-    mutating func addSpot(coordinate: CLLocationCoordinate2D) {
+    mutating func addSpot(coordinate: CLLocationCoordinate2D) -> Void {
         spotsByX = spotsByX.insert(XSpot(coordinate))
         spotsByY = spotsByY.insert(YSpot(coordinate))
     }
     
-    func getSpots(upperLeft: CLLocationCoordinate2D,
-               _ lowerRight: CLLocationCoordinate2D) -> Set<ParkingSpot> {
-        
+    func spotsWithinView(upperLeft: CLLocationCoordinate2D,
+                         _ lowerRight: CLLocationCoordinate2D) -> Set<ParkingSpot> {
         print("TEST TEST")
         let spotsInXRange = spotsByX
             .valuesBetween(XSpot(upperLeft), and: XSpot(lowerRight))
@@ -172,7 +172,7 @@ struct ParkingSpots: Model {
             x: mapPoint.x + radius, y: mapPoint.y - radius))
         
         // get spots within radius
-        let nearby = getSpots(upperLeft, lowerRight).filter() { spot in
+        let nearby = spotsWithinView(upperLeft, lowerRight).filter() { spot in
             let spotLocation = CLLocation(latitude: spot.lat,
                                           longitude: spot.long)
             return location.distanceFromLocation(spotLocation) < radius
