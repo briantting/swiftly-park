@@ -8,6 +8,8 @@
 import Foundation
 import MapKit
 
+
+
 class HTTPManager {
     let ipAddress = "http:localhost:3000/"
     
@@ -20,7 +22,7 @@ class HTTPManager {
     
     
     
-    class func getParkingSpots(upperLeft: CLLocationCoordinate2D, _ lowerRight: CLLocationCoordinate2D, completionHandler: (parkingSpots : [ParkingSpot]) -> ()) -> Void {
+    class func getParkingSpots(upperLeft: CLLocationCoordinate2D, _ lowerRight: CLLocationCoordinate2D, completionHandler: (parkingSpots : Set<ParkingSpot>) -> ()) -> Void {
         // Checks if task is already running. Cancels to avoid multiple requests.
         
         if getTask != nil {
@@ -46,12 +48,13 @@ class HTTPManager {
         }
         // Starts task
         getTask?.resume()
-        //Need to wait for task to complete
-//        sleep(1)
         
     }
     
-    class func convertStringToParkingSpots(serverString : NSString) -> [ParkingSpot] {
+    /*
+     *
+     */
+    class func convertStringToParkingSpots(serverString : NSString) -> Set<ParkingSpot> {
         let coordinateList = serverString.componentsSeparatedByString(",")
         var latitudes = [Double]()
         var longitudes = [Double]()
@@ -66,9 +69,14 @@ class HTTPManager {
         
         let spots = latitudes.enumerate().map ({ParkingSpot(CLLocationCoordinate2D(latitude: latitudes[$0.index], longitude: longitudes[$0.index]))})
         
-        return spots
+        let setOfSpots = Set(spots)
+        
+        return setOfSpots
     }
     
+    /*
+     *
+     */
     class func postParkingSpot(coordinate : CLLocationCoordinate2D, _ addSpot : Bool) -> Void {
         if self.postTask != nil {
             self.postTask?.cancel()
@@ -88,6 +96,9 @@ class HTTPManager {
         postTask?.resume()
     }
     
+    /*
+     *
+     */
     class func convertCoordinateToString(coordinate : CLLocationCoordinate2D, _ addSpot : Bool) -> String {
         var stringCoordinate = String("")
         if addSpot {
@@ -102,6 +113,9 @@ class HTTPManager {
         return stringCoordinate
     }
     
+    /*
+     *
+     */
     class func convertCoordinateToString(coordinate1 : CLLocationCoordinate2D, _ coordinate2 : CLLocationCoordinate2D) -> String {
         var stringCoordinate = String("")
         stringCoordinate += String(coordinate1.latitude)
