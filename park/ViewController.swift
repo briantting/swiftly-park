@@ -96,7 +96,6 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
         let toRemove = Array(spotsInView.subtract(self.spots))
         for spot in toRemove {
             print("removing", spot)
-//            mapView.removeAnnotation(spot)
         }
         mapView.removeAnnotations(toRemove)
         
