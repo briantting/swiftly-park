@@ -234,6 +234,9 @@ class Socket {
 
 
 // ---- [ structs ] -----------------------------------------------------------
+/**
+ Represents a HTTPRequest from an user's phone
+ */
 struct HTTPRequest {
     let cs : ClientSocket
     let raw : String
@@ -244,6 +247,14 @@ struct HTTPRequest {
     
     // ---- [ setup ] ---------------------------------------------------------
     
+    /**
+     The main meat of the HTTPRequest
+     
+     - parameters:
+        - cs: The connected Client Socket
+     
+     Parses the request that came in from the user and stores in commandMsg
+     */
     init(cs : ClientSocket) {
         // temp vars so that struct members can be constant
         var tempRaw = ""
@@ -253,6 +264,7 @@ struct HTTPRequest {
         self.cs = cs
         let lines = cs.fetchRequest()
         
+        //If empty request, set defaults and exit
         guard lines.count > 1 else {
             self.isGetCommand = false
             self.isInvalidRequest = true
@@ -284,6 +296,7 @@ struct HTTPRequest {
         
         print("Command received: \(command)")
         
+        //Initialize fields depending on request
         if command == "GET" {
             isGetCommand = true
             isInvalidRequest = false
@@ -303,17 +316,31 @@ struct HTTPRequest {
     
     // ---- [ instance methods ] ----------------------------------------------
     
+    /**
+     Returns the client clientAddress
+     
+     - returns:
+     Returns the client's IP address aka "127.0.0.1"
+     */
     func clientAddress() -> String? {
         return cs.clientAddress()
     }
     
 }
 
+/**
+ Handles sending a response back to the requester
+ */
 struct HTTPResponse {
     let cs : ClientSocket
     
     // ---- [ instance methods ] ----------------------------------------------
-    
+    /**
+     Sends a message back across the client socket
+     
+     - parameters:
+        - message: the response message
+     */
     func sendRaw(message : String) {
         cs.sendResponse(message)
     }
@@ -871,6 +898,16 @@ import MapKit
 
 
 // ---- [ Process Get Command ] ------------------------------------------------------
+/**
+ Takes a string from a GET request and returns a string of available parking spot coordinates
+ 
+ - returns:
+ A string of available parking spots, such as "39.2134312,-100.3244321,39.53214,-101.324213"
+ 
+ - parameters:
+    - msg: The GET request
+    - parkingSpots: the model that stores parking spots
+ */
 func processGetCommand(msg : String, _ parkingSpots : Model) -> String {
     let coordinates = convertStringToSpots(msg)
     guard coordinates.count == 2 else {
@@ -883,6 +920,13 @@ func processGetCommand(msg : String, _ parkingSpots : Model) -> String {
 }
 
 // ---- [ Process Post Command ] ------------------------------------------------------
+/**
+ Takes a string from a POST request and updates the Model
+ 
+ - parameters:
+    - msg: The POST request
+    - parkingSpots: the model that stores parking spots
+ */
 func processPostCommand(msg : String, inout _ parkingSpots : Model) -> Void {
     let appleLocationAccuracy = 5.0
     let commandIndex = msg.indexOf(",")
@@ -940,11 +984,15 @@ func convertSpotsToString(spots : Set<ParkingSpot>) -> String {
     return stringSpots
 }
 
-/*
- * Returns an array of CLLocationCoordinate2D objects from a string of this format:
- * "39.23432143,-132.23141234123,54.2341312,-100.32413243"
- * There can be zero or many coordinates in the string
- * The first value of a pair is latitude, and the second value is longitude
+/**
+  - returns:
+  An array of CLLocationCoordinate2D objects
+ 
+ - parameters:
+    - msg: A string like "39.23432143,-132.23141234123,54.2341312,-100.32413243"
+  
+  There can be zero or many coordinates in the string
+  The first value of a pair is latitude, and the second value is longitude
  */
 func convertStringToSpots(msg : String) -> [CLLocationCoordinate2D] {
     let coordinateList = msg.componentsSeparatedByString(",")
@@ -966,8 +1014,11 @@ func convertStringToSpots(msg : String) -> [CLLocationCoordinate2D] {
 }
 
 // ---- [ Populate trees with default parking spots for Cupertino demo] ---------------------------------
-/*
- * A setup function for demoing.
+/**
+ A setup function for demoing. Enters default spots into Model
+ 
+ - parameters:
+    -parkingSpots: The model to populate
  */
 func setupDefaultParkingSpots(inout parkingSpots : Model) -> Void {
     let appleCampus = CLLocationCoordinate2D(latitude: 37.33182, longitude: -122.03118)
@@ -983,6 +1034,7 @@ func setupDefaultParkingSpots(inout parkingSpots : Model) -> Void {
 }
 
 // ---- [ server setup and "main" method] ------------------------------------------------------
+
 //Server is set up and continues to run in a while loop
 let app = Server(port: port)
 var parkingSpots : Model = ParkingSpots()
@@ -991,8 +1043,8 @@ print("Running server on port \(port)")
 setupDefaultParkingSpots(&parkingSpots)
 
 /* 
- * The closure to pass to the server's run func
- * Processes each socket connection and sends a response
+ The closure to pass to the server's run func
+ Processes each socket connection and sends a response
  */
 app.run() {
     request, response -> () in

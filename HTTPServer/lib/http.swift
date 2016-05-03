@@ -9,6 +9,9 @@
 include "lib/utils.swift" // for String extension
 
 // ---- [ structs ] -----------------------------------------------------------
+/**
+ Represents a HTTPRequest from an user's phone
+ */
 struct HTTPRequest {
     let cs : ClientSocket
     let raw : String
@@ -19,6 +22,14 @@ struct HTTPRequest {
     
     // ---- [ setup ] ---------------------------------------------------------
     
+    /**
+     The main meat of the HTTPRequest
+     
+     - parameters:
+        - cs: The connected Client Socket
+     
+     Parses the request that came in from the user and stores in commandMsg
+     */
     init(cs : ClientSocket) {
         // temp vars so that struct members can be constant
         var tempRaw = ""
@@ -28,6 +39,7 @@ struct HTTPRequest {
         self.cs = cs
         let lines = cs.fetchRequest()
         
+        //If empty request, set defaults and exit
         guard lines.count > 1 else {
             self.isGetCommand = false
             self.isInvalidRequest = true
@@ -59,6 +71,7 @@ struct HTTPRequest {
         
         print("Command received: \(command)")
         
+        //Initialize fields depending on request
         if command == "GET" {
             isGetCommand = true
             isInvalidRequest = false
@@ -78,17 +91,31 @@ struct HTTPRequest {
     
     // ---- [ instance methods ] ----------------------------------------------
     
+    /**
+     Returns the client clientAddress
+     
+     - returns:
+     Returns the client's IP address aka "127.0.0.1"
+     */
     func clientAddress() -> String? {
         return cs.clientAddress()
     }
     
 }
 
+/**
+ Handles sending a response back to the requester
+ */
 struct HTTPResponse {
     let cs : ClientSocket
     
     // ---- [ instance methods ] ----------------------------------------------
-    
+    /**
+     Sends a message back across the client socket
+     
+     - parameters:
+        - message: the response message
+     */
     func sendRaw(message : String) {
         cs.sendResponse(message)
     }
