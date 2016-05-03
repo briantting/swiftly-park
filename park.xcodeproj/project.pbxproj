@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		14FC4AEF1CD69965005EDB84 /* FitnessTrip.gpx in Resources */ = {isa = PBXBuildFile; fileRef = 14FC4AEE1CD69965005EDB84 /* FitnessTrip.gpx */; };
-		784D01D41CD3E1DA00613F71 /* HTTPManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784D01D31CD3E1DA00613F71 /* HTTPManager.swift */; };
 		784D01EA1CD3E32900613F71 /* HTTPManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784D01D31CD3E1DA00613F71 /* HTTPManager.swift */; };
 		784D02011CD3F1B900613F71 /* HTTPServer in Resources */ = {isa = PBXBuildFile; fileRef = 784D02001CD3F1B900613F71 /* HTTPServer */; };
 		AA3FF4031CD7AA9D00B693A9 /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA3FF4021CD7AA9D00B693A9 /* Model.swift */; };
@@ -323,7 +322,6 @@
 				AA480CE81CBC1231008294D0 /* parkTests.swift in Sources */,
 				AA5141F01CD6C1530043DA48 /* MapView.swift in Sources */,
 				AA9C9FF51CD68ED40043AA6C /* Util.swift in Sources */,
-				784D01D41CD3E1DA00613F71 /* HTTPManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

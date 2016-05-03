@@ -28,7 +28,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
         locationManager.startUpdatingLocation()
         
         // updates map every 5 seconds
-        NSTimer.scheduledTimerWithTimeInterval(5,
+        NSTimer.scheduledTimerWithTimeInterval(0.5,
                                                target: self,
                                                selector: #selector(ViewController.updateMap),
                                                userInfo: nil,
