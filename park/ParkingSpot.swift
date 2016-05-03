@@ -78,6 +78,7 @@ struct ParkingSpots {
     func getSpots(upperLeft: CLLocationCoordinate2D,
                _ lowerRight: CLLocationCoordinate2D) -> Set<ParkingSpot> {
         
+        print("TEST TEST")
         let spotsInXRange = spotsByX
             .valuesBetween(XSpot(upperLeft), and: XSpot(lowerRight))
             .map({$0 as ParkingSpot})
@@ -90,6 +91,7 @@ struct ParkingSpots {
     }
     
     mutating func removeSpot(coordinate: CLLocationCoordinate2D) -> Void {
+        print("TEST TEST")
         spotsByX = spotsByX.remove(XSpot(coordinate))
         spotsByY = spotsByY.remove(YSpot(coordinate))
     }
