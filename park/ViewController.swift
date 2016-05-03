@@ -10,6 +10,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
     var isDriving: Bool = true // tracks if user is driving
     var prevLocation: CLLocation? = nil // tracks previous location for speed calculation
     var prevSpeed: Double = 5 // tracks previous speed
+    var spots = [ParkingSpot]()
     var locationManager: CLLocationManager = CLLocationManager()
     
     override func viewDidLoad() {
@@ -55,16 +56,15 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
         // Park
         if isDriving && speed < 5 {
             isDriving = false
-            server.postParkingSpot(prevLocation!.coordinate, false)
+            HTTPManager.postParkingSpot(prevLocation!.coordinate, false)
             print("Parked")
         }
         // Unpark
         else if !isDriving && speed >= 5 {
             isDriving = true
-            server.postParkingSpot(prevLocation!.coordinate, true)
+            HTTPManager.postParkingSpot(prevLocation!.coordinate, true)
             print("Unparked")
         }
-        
         prevLocation = latestLocation
         prevSpeed = speed
     }
@@ -87,6 +87,9 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
         let (upperLeft, lowerRight) = mapView.getMapBounds()
         
         // spots that should be on the map
+		HTTPManager.getParkingSpots(upperLeft, lowerRight, completionHandler: {parkingSpots in
+            self.spots = parkingSpots
+        })
         let updatedParkingSpots = Set(server.getParkingSpots(upperLeft, lowerRight))
         
         // remove parking spots that are not in updatedParkingSpots
