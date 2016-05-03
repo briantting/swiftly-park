@@ -5,7 +5,6 @@ import MapKit
 class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDelegate {
 
     @IBOutlet weak var mapView: MKMapView!
-    var server: HTTPManager = HTTPManager()
 
     var isDriving: Bool = true // tracks if user is driving
     var prevLocation: CLLocation? = nil // tracks previous location for speed calculation
@@ -29,7 +28,8 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
         locationManager.startUpdatingLocation()
         
         // updates map every 5 seconds
-        NSTimer.scheduledTimerWithTimeInterval(5, target: self, selector: #selector(ViewController.updateMap), userInfo: nil, repeats: true)
+        NSTimer.scheduledTimerWithTimeInterval(0.5, target: self, selector: #selector(ViewController.updateMap), userInfo: nil, repeats: true)
+        mapView.tintColor = UIColor.redColor()
     }
     
     override func didReceiveMemoryWarning() {
@@ -52,12 +52,14 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
         // Park
         if isDriving && speed < 5 {
             isDriving = false
+            mapView.tintColor = UIColor.blueColor()
             HTTPManager.postParkingSpot(prevLocation!.coordinate, false)
             print("Parked")
         }
         // Unpark
         else if !isDriving && speed >= 5 {
             isDriving = true
+            mapView.tintColor = UIColor.redColor()
             HTTPManager.postParkingSpot(prevLocation!.coordinate, true)
             print("Unparked")
         }
@@ -82,6 +84,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
         HTTPManager.getParkingSpots(upperLeft, lowerRight, completionHandler: {parkingSpots in
             self.spots = parkingSpots
         })
+        
         mapView.showsUserLocation = true
         for spot in spots {
             mapView.addAnnotation(spot)

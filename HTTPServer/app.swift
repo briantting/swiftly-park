@@ -282,7 +282,7 @@ struct HTTPRequest {
             
         }
         
-        print(command)
+        print("Command received: \(command)")
         
         if command == "GET" {
             isGetCommand = true
@@ -340,8 +340,6 @@ class Server {
                 print("acceptClientSocket() failed.")
                 continue
             }
-            
-            print("START")
             
             // get request
             let request = HTTPRequest(cs: cs)
@@ -663,9 +661,6 @@ import MapKit
 
 // ---- [ Process Get Command ] ------------------------------------------------------
 func processGetCommand(msg : String, _ parkingSpots : ParkingSpots) -> String {
-//    print("GET Command: Here is what is in the binary trees")
-//    print("XTree: \(parkingSpots.spotsByX)")
-//    print("YTree: \(parkingSpots.spotsByY)")
     let coordinates = convertStringToSpots(msg)
     guard coordinates.count == 2 else {
         return String("Invalid Get Request")
@@ -683,17 +678,11 @@ func processPostCommand(msg : String, inout _ parkingSpots : ParkingSpots) -> Vo
     let stringCoordinates = msg[commandIndex+1..<msg.characters.count]
     let coordinates = convertStringToSpots(stringCoordinates)
     
-//    print("The tree beforePOST command: ")
-//    print("XTree: \(parkingSpots.spotsByX)")
-//    print("YTree: \(parkingSpots.spotsByY)")
-    
     if command == "ADD" {
-//        print("POST ADD MESSAGE")
         for coordinate in coordinates {
             parkingSpots.addSpot(coordinate)
         }
     } else if command == "REMOVE" {
-//        print("POST REMOVE MESSAGE")
         for coordinate in coordinates {
             parkingSpots.removeSpot(coordinate)
         }
@@ -702,15 +691,16 @@ func processPostCommand(msg : String, inout _ parkingSpots : ParkingSpots) -> Vo
         print("Invalid POST command")
     }
     
-//    print("The tree after POST command: ")
-//    print("XTree: \(parkingSpots.spotsByX)")
-//    print("YTree: \(parkingSpots.spotsByY)")
-    
-    
 }
 
 // ---- [ Adapters for networking and binary trees] ------------------------------------------------------
 
+/*
+ * Returns a string with this format:
+ * "39.23432143,-132.23141234123,54.2341312,-100.32413243"
+ * There can be zero or many coordinates in the string
+ * The first value of a pair is latitude, and the second value is longitude
+ */
 func convertSpotsToString(spots : Set<ParkingSpot>) -> String {
     var stringSpots = ""
     
@@ -730,6 +720,12 @@ func convertSpotsToString(spots : Set<ParkingSpot>) -> String {
     return stringSpots
 }
 
+/*
+ * Returns an array of CLLocationCoordinate2D objects from a string of this format:
+ * "39.23432143,-132.23141234123,54.2341312,-100.32413243"
+ * There can be zero or many coordinates in the string
+ * The first value of a pair is latitude, and the second value is longitude
+ */
 func convertStringToSpots(msg : String) -> [CLLocationCoordinate2D] {
     let coordinateList = msg.componentsSeparatedByString(",")
     var latitudes = [Double]()
@@ -742,14 +738,17 @@ func convertStringToSpots(msg : String) -> [CLLocationCoordinate2D] {
         }
     }
     
-    let spots = latitudes.enumerate().map ({CLLocationCoordinate2D(latitude: latitudes[$0.index], longitude: longitudes[$0.index])})
-//    print(spots)
+    let spots = latitudes.enumerate().map ({
+        CLLocationCoordinate2D(latitude: latitudes[$0.index], longitude: longitudes[$0.index])
+    })
     
     return spots
 }
 
-// ---- [ Populate trees with default parking spots ] ------------------------------------------------------
-
+// ---- [ Populate trees with default parking spots for Cupertino demo] ---------------------------------
+/*
+ * A setup function for demoing.
+ */
 func setupDefaultParkingSpots(inout parkingSpots : ParkingSpots) -> Void {
     let appleCampus = CLLocationCoordinate2D(latitude: 37.33182, longitude: -122.03118)
     let ducati = CLLocationCoordinate2D(latitude: 37.3276574, longitude: -122.0350399)
@@ -763,14 +762,18 @@ func setupDefaultParkingSpots(inout parkingSpots : ParkingSpots) -> Void {
     return
 }
 
-// ---- [ server setup ] ------------------------------------------------------
-
+// ---- [ server setup and "main" method] ------------------------------------------------------
+//Server is set up and continues to run in a while loop
 let app = Server(port: port)
 var parkingSpots = ParkingSpots()
 
 print("Running server on port \(port)")
 setupDefaultParkingSpots(&parkingSpots)
 
+/* 
+ * The closure to pass to the server's run func
+ * Processes each socket connection and sends a response
+ */
 app.run() {
     request, response -> () in
     // get and display client address
@@ -779,9 +782,6 @@ app.run() {
         return
     }
     print("Client IP: \(clientAddress)")
-    
-    // print request headers
-    //print(request.rawHeaders)
     
     let responseMsg : String
     
@@ -792,11 +792,11 @@ app.run() {
     else if request.isGetCommand {
         responseMsg = processGetCommand(request.commandMsg, parkingSpots)
     } else {
+        //Must be POST command
         processPostCommand(request.commandMsg, &parkingSpots)
         responseMsg = "Post successful"
     }
     response.sendRaw("HTTP/1.1 200 OK\n\n\(responseMsg)")
-    print("END")
 }
 
 
