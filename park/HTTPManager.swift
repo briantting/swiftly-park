@@ -10,7 +10,6 @@ import MapKit
 
 class HTTPManager {
     static let ipAddress = "http://127.0.0.1:3000/"
-    
     // Sets up the URL session
     static let session = NSURLSession(configuration: NSURLSessionConfiguration.defaultSessionConfiguration())
     // Will do the requesting and fetching of data

@@ -10,9 +10,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
     var isDriving: Bool = true // tracks if user is driving
     var prevLocation: CLLocation? = nil // tracks previous location for speed calculation
     var prevSpeed: Double = 5 // tracks previous speed
-    var time: Double = NSDate.timeIntervalSinceReferenceDate() // tracks time
     var spots = [ParkingSpot]()
-    
     var locationManager: CLLocationManager = CLLocationManager()
     
     override func viewDidLoad() {
@@ -29,6 +27,9 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
         locationManager.requestWhenInUseAuthorization()
         locationManager.startUpdatingLocation()
+        
+        // updates map every 5 seconds
+        NSTimer.scheduledTimerWithTimeInterval(5, target: self, selector: #selector(ViewController.updateMap), userInfo: nil, repeats: true)
     }
     
     override func didReceiveMemoryWarning() {
@@ -60,12 +61,6 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
             HTTPManager.postParkingSpot(prevLocation!.coordinate, true)
             print("Unparked")
         }
-        // updates every 30 seconds
-        if NSDate.timeIntervalSinceReferenceDate() - time > 1 {
-            updateMap()
-            time = NSDate.timeIntervalSinceReferenceDate()
-        }
-        
         prevLocation = latestLocation
         prevSpeed = speed
     }
