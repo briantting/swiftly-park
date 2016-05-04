@@ -8,7 +8,6 @@
 import Foundation
 import MapKit
 
-
 /**
  Handles connecting to the server to get and post parking spot data
  Creates background threads for connecting with the server
